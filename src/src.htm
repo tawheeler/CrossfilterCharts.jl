@@ -1,0 +1,154 @@
+<head>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" rel="stylesheet">
+</head>
+
+<body>
+	<div style="float:left;">
+	  <h3>Sepal Length</h3>
+	  <div id="sepal_length_chart"></div>
+	</div>
+
+	<div style="float:left;">
+	  <h3>Species</h3>
+	  <div id="species_chart"></div>
+	</div>
+
+	<div style="float:left;">
+	  <h3>Sepal Width</h3>
+	  <div id="sepal_width_chart"></div>
+	</div>
+
+	<div style="float:left;">
+	  <h3>Petal Length</h3>
+	  <div id="petal_length_chart"></div>
+	</div>
+
+	<div style="float:left;">
+	  <h3>Petal Width</h3>
+	  <div id="petal_width_chart"></div>
+	</div>
+
+	<div style="float:left;">
+	  <h3>Reset Button</h3>
+	  <div id="resetButton"> </div>
+	</div>
+</body>
+
+<script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.1/dc.js'></script>
+<script type="text/javascript">
+	data = [{"sepal_length": 5.1, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.5}, {"sepal_length": 4.9, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa", "sepal_width": 3}, {"sepal_length": 4.7, "petal_length": 1.3, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.2}, {"sepal_length": 4.6, "petal_length": 1.5, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.1}, {"sepal_length": 5, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.6}, {"sepal_length": 5.4, "petal_length": 1.7, "petal_width": 0.4, "species": "setosa", "sepal_width": 3.9}, {"sepal_length": 4.6, "petal_length": 1.4, "petal_width": 0.3, "species": "setosa", "sepal_width": 3.4}, {"sepal_length": 5, "petal_length": 1.5, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.4}, {"sepal_length": 4.4, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa", "sepal_width": 2.9}, {"sepal_length": 4.9, "petal_length": 1.5, "petal_width": 0.1, "species": "setosa", "sepal_width": 3.1}, {"sepal_length": 5.4, "petal_length": 1.5, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.7}, {"sepal_length": 4.8, "petal_length": 1.6, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.4}, {"sepal_length": 4.8, "petal_length": 1.4, "petal_width": 0.1, "species": "setosa", "sepal_width": 3}, {"sepal_length": 4.3, "petal_length": 1.1, "petal_width": 0.1, "species": "setosa", "sepal_width": 3}, {"sepal_length": 5.8, "petal_length": 1.2, "petal_width": 0.2, "species": "setosa", "sepal_width": 4}, {"sepal_length": 5.7, "petal_length": 1.5, "petal_width": 0.4, "species": "setosa", "sepal_width": 4.4}, {"sepal_length": 5.4, "petal_length": 1.3, "petal_width": 0.4, "species": "setosa", "sepal_width": 3.9}, {"sepal_length": 5.1, "petal_length": 1.4, "petal_width": 0.3, "species": "setosa", "sepal_width": 3.5}, {"sepal_length": 5.7, "petal_length": 1.7, "petal_width": 0.3, "species": "setosa", "sepal_width": 3.8}, {"sepal_length": 5.1, "petal_length": 1.5, "petal_width": 0.3, "species": "setosa", "sepal_width": 3.8}, {"sepal_length": 5.4, "petal_length": 1.7, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.4}, {"sepal_length": 5.1, "petal_length": 1.5, "petal_width": 0.4, "species": "setosa", "sepal_width": 3.7}, {"sepal_length": 4.6, "petal_length": 1, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.6}, {"sepal_length": 5.1, "petal_length": 1.7, "petal_width": 0.5, "species": "setosa", "sepal_width": 3.3}, {"sepal_length": 4.8, "petal_length": 1.9, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.4}, {"sepal_length": 5, "petal_length": 1.6, "petal_width": 0.2, "species": "setosa", "sepal_width": 3}, {"sepal_length": 5, "petal_length": 1.6, "petal_width": 0.4, "species": "setosa", "sepal_width": 3.4}, {"sepal_length": 5.2, "petal_length": 1.5, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.5}, {"sepal_length": 5.2, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.4}, {"sepal_length": 4.7, "petal_length": 1.6, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.2}, {"sepal_length": 4.8, "petal_length": 1.6, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.1}, {"sepal_length": 5.4, "petal_length": 1.5, "petal_width": 0.4, "species": "setosa", "sepal_width": 3.4}, {"sepal_length": 5.2, "petal_length": 1.5, "petal_width": 0.1, "species": "setosa", "sepal_width": 4.1}, {"sepal_length": 5.5, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa", "sepal_width": 4.2}, {"sepal_length": 4.9, "petal_length": 1.5, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.1}, {"sepal_length": 5, "petal_length": 1.2, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.2}, {"sepal_length": 5.5, "petal_length": 1.3, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.5}, {"sepal_length": 4.9, "petal_length": 1.4, "petal_width": 0.1, "species": "setosa", "sepal_width": 3.6}, {"sepal_length": 4.4, "petal_length": 1.3, "petal_width": 0.2, "species": "setosa", "sepal_width": 3}, {"sepal_length": 5.1, "petal_length": 1.5, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.4}, {"sepal_length": 5, "petal_length": 1.3, "petal_width": 0.3, "species": "setosa", "sepal_width": 3.5}, {"sepal_length": 4.5, "petal_length": 1.3, "petal_width": 0.3, "species": "setosa", "sepal_width": 2.3}, {"sepal_length": 4.4, "petal_length": 1.3, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.2}, {"sepal_length": 5, "petal_length": 1.6, "petal_width": 0.6, "species": "setosa", "sepal_width": 3.5}, {"sepal_length": 5.1, "petal_length": 1.9, "petal_width": 0.4, "species": "setosa", "sepal_width": 3.8}, {"sepal_length": 4.8, "petal_length": 1.4, "petal_width": 0.3, "species": "setosa", "sepal_width": 3}, {"sepal_length": 5.1, "petal_length": 1.6, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.8}, {"sepal_length": 4.6, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.2}, {"sepal_length": 5.3, "petal_length": 1.5, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.7}, {"sepal_length": 5, "petal_length": 1.4, "petal_width": 0.2, "species": "setosa", "sepal_width": 3.3}, {"sepal_length": 7, "petal_length": 4.7, "petal_width": 1.4, "species": "versicolor", "sepal_width": 3.2}, {"sepal_length": 6.4, "petal_length": 4.5, "petal_width": 1.5, "species": "versicolor", "sepal_width": 3.2}, {"sepal_length": 6.9, "petal_length": 4.9, "petal_width": 1.5, "species": "versicolor", "sepal_width": 3.1}, {"sepal_length": 5.5, "petal_length": 4, "petal_width": 1.3, "species": "versicolor", "sepal_width": 2.3}, {"sepal_length": 6.5, "petal_length": 4.6, "petal_width": 1.5, "species": "versicolor", "sepal_width": 2.8}, {"sepal_length": 5.7, "petal_length": 4.5, "petal_width": 1.3, "species": "versicolor", "sepal_width": 2.8}, {"sepal_length": 6.3, "petal_length": 4.7, "petal_width": 1.6, "species": "versicolor", "sepal_width": 3.3}, {"sepal_length": 4.9, "petal_length": 3.3, "petal_width": 1, "species": "versicolor", "sepal_width": 2.4}, {"sepal_length": 6.6, "petal_length": 4.6, "petal_width": 1.3, "species": "versicolor", "sepal_width": 2.9}, {"sepal_length": 5.2, "petal_length": 3.9, "petal_width": 1.4, "species": "versicolor", "sepal_width": 2.7}, {"sepal_length": 5, "petal_length": 3.5, "petal_width": 1, "species": "versicolor", "sepal_width": 2}, {"sepal_length": 5.9, "petal_length": 4.2, "petal_width": 1.5, "species": "versicolor", "sepal_width": 3}, {"sepal_length": 6, "petal_length": 4, "petal_width": 1, "species": "versicolor", "sepal_width": 2.2}, {"sepal_length": 6.1, "petal_length": 4.7, "petal_width": 1.4, "species": "versicolor", "sepal_width": 2.9}, {"sepal_length": 5.6, "petal_length": 3.6, "petal_width": 1.3, "species": "versicolor", "sepal_width": 2.9}, {"sepal_length": 6.7, "petal_length": 4.4, "petal_width": 1.4, "species": "versicolor", "sepal_width": 3.1}, {"sepal_length": 5.6, "petal_length": 4.5, "petal_width": 1.5, "species": "versicolor", "sepal_width": 3}, {"sepal_length": 5.8, "petal_length": 4.1, "petal_width": 1, "species": "versicolor", "sepal_width": 2.7}, {"sepal_length": 6.2, "petal_length": 4.5, "petal_width": 1.5, "species": "versicolor", "sepal_width": 2.2}, {"sepal_length": 5.6, "petal_length": 3.9, "petal_width": 1.1, "species": "versicolor", "sepal_width": 2.5}, {"sepal_length": 5.9, "petal_length": 4.8, "petal_width": 1.8, "species": "versicolor", "sepal_width": 3.2}, {"sepal_length": 6.1, "petal_length": 4, "petal_width": 1.3, "species": "versicolor", "sepal_width": 2.8}, {"sepal_length": 6.3, "petal_length": 4.9, "petal_width": 1.5, "species": "versicolor", "sepal_width": 2.5}, {"sepal_length": 6.1, "petal_length": 4.7, "petal_width": 1.2, "species": "versicolor", "sepal_width": 2.8}, {"sepal_length": 6.4, "petal_length": 4.3, "petal_width": 1.3, "species": "versicolor", "sepal_width": 2.9}, {"sepal_length": 6.6, "petal_length": 4.4, "petal_width": 1.4, "species": "versicolor", "sepal_width": 3}, {"sepal_length": 6.8, "petal_length": 4.8, "petal_width": 1.4, "species": "versicolor", "sepal_width": 2.8}, {"sepal_length": 6.7, "petal_length": 5, "petal_width": 1.7, "species": "versicolor", "sepal_width": 3}, {"sepal_length": 6, "petal_length": 4.5, "petal_width": 1.5, "species": "versicolor", "sepal_width": 2.9}, {"sepal_length": 5.7, "petal_length": 3.5, "petal_width": 1, "species": "versicolor", "sepal_width": 2.6}, {"sepal_length": 5.5, "petal_length": 3.8, "petal_width": 1.1, "species": "versicolor", "sepal_width": 2.4}, {"sepal_length": 5.5, "petal_length": 3.7, "petal_width": 1, "species": "versicolor", "sepal_width": 2.4}, {"sepal_length": 5.8, "petal_length": 3.9, "petal_width": 1.2, "species": "versicolor", "sepal_width": 2.7}, {"sepal_length": 6, "petal_length": 5.1, "petal_width": 1.6, "species": "versicolor", "sepal_width": 2.7}, {"sepal_length": 5.4, "petal_length": 4.5, "petal_width": 1.5, "species": "versicolor", "sepal_width": 3}, {"sepal_length": 6, "petal_length": 4.5, "petal_width": 1.6, "species": "versicolor", "sepal_width": 3.4}, {"sepal_length": 6.7, "petal_length": 4.7, "petal_width": 1.5, "species": "versicolor", "sepal_width": 3.1}, {"sepal_length": 6.3, "petal_length": 4.4, "petal_width": 1.3, "species": "versicolor", "sepal_width": 2.3}, {"sepal_length": 5.6, "petal_length": 4.1, "petal_width": 1.3, "species": "versicolor", "sepal_width": 3}, {"sepal_length": 5.5, "petal_length": 4, "petal_width": 1.3, "species": "versicolor", "sepal_width": 2.5}, {"sepal_length": 5.5, "petal_length": 4.4, "petal_width": 1.2, "species": "versicolor", "sepal_width": 2.6}, {"sepal_length": 6.1, "petal_length": 4.6, "petal_width": 1.4, "species": "versicolor", "sepal_width": 3}, {"sepal_length": 5.8, "petal_length": 4, "petal_width": 1.2, "species": "versicolor", "sepal_width": 2.6}, {"sepal_length": 5, "petal_length": 3.3, "petal_width": 1, "species": "versicolor", "sepal_width": 2.3}, {"sepal_length": 5.6, "petal_length": 4.2, "petal_width": 1.3, "species": "versicolor", "sepal_width": 2.7}, {"sepal_length": 5.7, "petal_length": 4.2, "petal_width": 1.2, "species": "versicolor", "sepal_width": 3}, {"sepal_length": 5.7, "petal_length": 4.2, "petal_width": 1.3, "species": "versicolor", "sepal_width": 2.9}, {"sepal_length": 6.2, "petal_length": 4.3, "petal_width": 1.3, "species": "versicolor", "sepal_width": 2.9}, {"sepal_length": 5.1, "petal_length": 3, "petal_width": 1.1, "species": "versicolor", "sepal_width": 2.5}, {"sepal_length": 5.7, "petal_length": 4.1, "petal_width": 1.3, "species": "versicolor", "sepal_width": 2.8}, {"sepal_length": 6.3, "petal_length": 6, "petal_width": 2.5, "species": "virginica", "sepal_width": 3.3}, {"sepal_length": 5.8, "petal_length": 5.1, "petal_width": 1.9, "species": "virginica", "sepal_width": 2.7}, {"sepal_length": 7.1, "petal_length": 5.9, "petal_width": 2.1, "species": "virginica", "sepal_width": 3}, {"sepal_length": 6.3, "petal_length": 5.6, "petal_width": 1.8, "species": "virginica", "sepal_width": 2.9}, {"sepal_length": 6.5, "petal_length": 5.8, "petal_width": 2.2, "species": "virginica", "sepal_width": 3}, {"sepal_length": 7.6, "petal_length": 6.6, "petal_width": 2.1, "species": "virginica", "sepal_width": 3}, {"sepal_length": 4.9, "petal_length": 4.5, "petal_width": 1.7, "species": "virginica", "sepal_width": 2.5}, {"sepal_length": 7.3, "petal_length": 6.3, "petal_width": 1.8, "species": "virginica", "sepal_width": 2.9}, {"sepal_length": 6.7, "petal_length": 5.8, "petal_width": 1.8, "species": "virginica", "sepal_width": 2.5}, {"sepal_length": 7.2, "petal_length": 6.1, "petal_width": 2.5, "species": "virginica", "sepal_width": 3.6}, {"sepal_length": 6.5, "petal_length": 5.1, "petal_width": 2, "species": "virginica", "sepal_width": 3.2}, {"sepal_length": 6.4, "petal_length": 5.3, "petal_width": 1.9, "species": "virginica", "sepal_width": 2.7}, {"sepal_length": 6.8, "petal_length": 5.5, "petal_width": 2.1, "species": "virginica", "sepal_width": 3}, {"sepal_length": 5.7, "petal_length": 5, "petal_width": 2, "species": "virginica", "sepal_width": 2.5}, {"sepal_length": 5.8, "petal_length": 5.1, "petal_width": 2.4, "species": "virginica", "sepal_width": 2.8}, {"sepal_length": 6.4, "petal_length": 5.3, "petal_width": 2.3, "species": "virginica", "sepal_width": 3.2}, {"sepal_length": 6.5, "petal_length": 5.5, "petal_width": 1.8, "species": "virginica", "sepal_width": 3}, {"sepal_length": 7.7, "petal_length": 6.7, "petal_width": 2.2, "species": "virginica", "sepal_width": 3.8}, {"sepal_length": 7.7, "petal_length": 6.9, "petal_width": 2.3, "species": "virginica", "sepal_width": 2.6}, {"sepal_length": 6, "petal_length": 5, "petal_width": 1.5, "species": "virginica", "sepal_width": 2.2}, {"sepal_length": 6.9, "petal_length": 5.7, "petal_width": 2.3, "species": "virginica", "sepal_width": 3.2}, {"sepal_length": 5.6, "petal_length": 4.9, "petal_width": 2, "species": "virginica", "sepal_width": 2.8}, {"sepal_length": 7.7, "petal_length": 6.7, "petal_width": 2, "species": "virginica", "sepal_width": 2.8}, {"sepal_length": 6.3, "petal_length": 4.9, "petal_width": 1.8, "species": "virginica", "sepal_width": 2.7}, {"sepal_length": 6.7, "petal_length": 5.7, "petal_width": 2.1, "species": "virginica", "sepal_width": 3.3}, {"sepal_length": 7.2, "petal_length": 6, "petal_width": 1.8, "species": "virginica", "sepal_width": 3.2}, {"sepal_length": 6.2, "petal_length": 4.8, "petal_width": 1.8, "species": "virginica", "sepal_width": 2.8}, {"sepal_length": 6.1, "petal_length": 4.9, "petal_width": 1.8, "species": "virginica", "sepal_width": 3}, {"sepal_length": 6.4, "petal_length": 5.6, "petal_width": 2.1, "species": "virginica", "sepal_width": 2.8}, {"sepal_length": 7.2, "petal_length": 5.8, "petal_width": 1.6, "species": "virginica", "sepal_width": 3}, {"sepal_length": 7.4, "petal_length": 6.1, "petal_width": 1.9, "species": "virginica", "sepal_width": 2.8}, {"sepal_length": 7.9, "petal_length": 6.4, "petal_width": 2, "species": "virginica", "sepal_width": 3.8}, {"sepal_length": 6.4, "petal_length": 5.6, "petal_width": 2.2, "species": "virginica", "sepal_width": 2.8}, {"sepal_length": 6.3, "petal_length": 5.1, "petal_width": 1.5, "species": "virginica", "sepal_width": 2.8}, {"sepal_length": 6.1, "petal_length": 5.6, "petal_width": 1.4, "species": "virginica", "sepal_width": 2.6}, {"sepal_length": 7.7, "petal_length": 6.1, "petal_width": 2.3, "species": "virginica", "sepal_width": 3}, {"sepal_length": 6.3, "petal_length": 5.6, "petal_width": 2.4, "species": "virginica", "sepal_width": 3.4}, {"sepal_length": 6.4, "petal_length": 5.5, "petal_width": 1.8, "species": "virginica", "sepal_width": 3.1}, {"sepal_length": 6, "petal_length": 4.8, "petal_width": 1.8, "species": "virginica", "sepal_width": 3}, {"sepal_length": 6.9, "petal_length": 5.4, "petal_width": 2.1, "species": "virginica", "sepal_width": 3.1}, {"sepal_length": 6.7, "petal_length": 5.6, "petal_width": 2.4, "species": "virginica", "sepal_width": 3.1}, {"sepal_length": 6.9, "petal_length": 5.1, "petal_width": 2.3, "species": "virginica", "sepal_width": 3.1}, {"sepal_length": 5.8, "petal_length": 5.1, "petal_width": 1.9, "species": "virginica", "sepal_width": 2.7}, {"sepal_length": 6.8, "petal_length": 5.9, "petal_width": 2.3, "species": "virginica", "sepal_width": 3.2}, {"sepal_length": 6.7, "petal_length": 5.7, "petal_width": 2.5, "species": "virginica", "sepal_width": 3.3}, {"sepal_length": 6.7, "petal_length": 5.2, "petal_width": 2.3, "species": "virginica", "sepal_width": 3}, {"sepal_length": 6.3, "petal_length": 5, "petal_width": 1.9, "species": "virginica", "sepal_width": 2.5}, {"sepal_length": 6.5, "petal_length": 5.2, "petal_width": 2, "species": "virginica", "sepal_width": 3}, {"sepal_length": 6.2, "petal_length": 5.4, "petal_width": 2.3, "species": "virginica", "sepal_width": 3.4}, {"sepal_length": 5.9, "petal_length": 5.1, "petal_width": 1.8, "species": "virginica", "sepal_width": 3}];
+	// crossfilter
+	var cf = crossfilter(data);
+
+	// dimension
+	var species       = cf.dimension(function(d){return d.species; });
+	var sepal_length  = cf.dimension(function(d){return Math.round(d.sepal_length * 2)/2; });
+	var sepal_width   = cf.dimension(function(d){return Math.round(d.sepal_width * 2)/2; });
+	var petal_length  = cf.dimension(function(d){return Math.round(d.petal_length * 2)/2; });
+	var petal_width   = cf.dimension(function(d){return Math.round(d.petal_width * 2)/2; });
+
+	// groups
+	var species_sum      = species.group().reduceCount();
+	var sepal_length_sum = sepal_length.group().reduceSum(function(d){ return d.sepal_length; });
+	var sepal_width_sum  = sepal_width.group().reduceSum(function(d){ return d.sepal_width; });
+	var petal_length_sum = petal_length.group().reduceSum(function(d){ return d.petal_length; });
+	var petal_width_sum  = petal_width.group().reduceSum(function(d){ return d.petal_width; });
+
+	// implement unique species name extraction
+	window.species_names = _.chain(data).pluck("species").uniq().value()
+
+	var sepal_length_chart = dc
+		.barChart("#sepal_length_chart")
+		.width(250)
+		.height(200)
+		.dimension(sepal_length)
+		.group(sepal_length_sum)
+		.centerBar(true)
+		.x( d3.scale.linear().domain([3,10]) )
+		.xUnits(dc.units.fp.precision(.5));
+
+	var species_chart = dc
+		.barChart("#species_chart")
+		.width(250)
+		.height(200)
+		.dimension(species)
+		.group(species_sum)
+		.centerBar(true)
+		.x(d3.scale.ordinal().domain(species_names))
+		.xUnits(dc.units.ordinal)
+
+	var sepal_width_chart = dc.pieChart("#sepal_width_chart")
+		.width(250)
+		.height(200)
+		.radius(80)
+		.innerRadius(25)
+		.dimension(sepal_width)
+		.group(sepal_width_sum)
+		.renderLabel(true)
+		.label(function (d) { return (d.data.key*10 + "-" + (d.data.key + 1)*10%100 ); });
+
+	var petal_length_chart = dc.rowChart("#petal_length_chart")
+		.width(250)
+		.height(200)
+		.dimension(petal_length)
+		.group(petal_length_sum)
+		.elasticX(true)
+		.gap(1)
+		.labelOffsetX(0)
+		.labelOffsetY(10);
+
+	var petal_width_chart = dc.lineChart("#petal_width_chart")
+		.width(250)
+		.height(200)
+		.dimension(petal_width)
+		.group(petal_width_sum)
+		.x( d3.scale.linear().domain([0,3]) )
+		.xUnits(dc.units.fp.precision(.5));
+
+	// add a reset button as shown in the tutorial
+	var showButton = function(){
+
+	  if(species_chart.filters().length > 0 ||
+	     sepal_length_chart.filters().length > 0 ||
+	     sepal_width_chart.filters().length > 0 ||
+	     petal_length_chart.filters().length > 0 ||
+	     petal_width_chart.filters().length > 0){
+
+	    d3.select(".btn-btn")
+	      .remove();
+
+	    d3.select("#resetButton")
+	      .append("button")
+	      .attr("type","button")
+	      .attr("class","btn-btn")
+	      .append("div")
+	      .attr("class","label")
+	      .text(function(d) { return "Reset";})
+	      .on("click", function(){
+	      species_chart.filter(null);
+	      sepal_length_chart.filter(null);
+	      sepal_width_chart.filter(null);
+	      petal_length_chart.filter(null);
+	      petal_width_chart.filter(null);
+	      dc.redrawAll();
+	    });
+
+	  } else {
+
+	    d3.select(".btn-btn")
+	      .remove();
+
+	  };
+	};
+
+	species_chart.on('filtered', function(){showButton();});
+  	sepal_length_chart.on('filtered', function(){showButton();});
+  	sepal_width_chart.on('filtered', function(){showButton();});
+  	petal_length_chart.on('filtered', function(){showButton();});
+  	petal_width_chart.on('filtered', function(){showButton();});
+  
+  	dc.renderAll();
+</script>
