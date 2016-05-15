@@ -1,5 +1,6 @@
 type DCOut
 	df::DataFrame
+	# dims::Vector{Dimension}
 	charts::Vector{DCChart}
 
 	function DCOut(df::DataFrame)

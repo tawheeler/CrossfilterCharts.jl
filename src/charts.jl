@@ -86,6 +86,10 @@ function infer_chart_type{I<:Integer}(arr::DataArray{I})
 	chart = deepcopy(BarChart)
 	chart[:width] = 250.0
 	chart[:height] = 200.0
+	chart[:x] = @sprintf("d3.scale.linear().domain([%d,%d])",
+					     floor(Int, minimum(arr)),
+					     ceil(Int, maximum(arr)))
+	chart[:xUnits] = "dc.units.fp.precision(.0)"
 	chart
 end
 function infer_chart_type{R<:AbstractFloat}(arr::DataArray{R})
@@ -118,7 +122,7 @@ type DCChart
 		dim::Int,
 		group::ASCIIString,
 		title::ASCIIString,
-		parent::ASCIIString = "chart_"*randstring(6),
+		parent::ASCIIString = @sprintf("chart_%06d", rand(0:999999)),
 		)
 		new(title, dim, parent, group, typ)
 	end
@@ -126,7 +130,7 @@ end
 
 function write_dcchart(io::IO, chart::DCChart, indent::Int, name::Symbol)
 	tabbing = "  "^indent
-	println(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\#", chart.parent, ")") # TODO: add chart group
+	println(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"\#", chart.parent, "\")") # TODO: add chart group
 	println(io, tabbing, "  .dimension(", name, ")")
 	print(io, tabbing, "  .group(", chart.group, ")")
 
@@ -136,7 +140,7 @@ function write_dcchart(io::IO, chart::DCChart, indent::Int, name::Symbol)
 			print(io, "\n", tabbing, "  .", string(a.name), "(", get(a.value), ")")
 		end
 	end
-	println(";")
+	println(io, ";")
 end
 
 #=

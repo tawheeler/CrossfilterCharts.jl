@@ -9,7 +9,7 @@ function write_html_chart_entry(io::IO, chart::DCChart, indent::Int=0)
 	tabbing = "  "^indent
 	println(io, tabbing, "<div style=\"float:left;\">")
 	println(io, tabbing, "  <h3>", chart.title, "</h3>")
-	println(io, tabbing, "  <div id=\"", chart.id, "\"></div>")
+	println(io, tabbing, "  <div id=\"", chart.parent, "\"></div>")
 	println(io, tabbing, "</div>")
 end
 function write_html_body(io::IO, charts::Vector{DCChart})
@@ -86,7 +86,7 @@ function write_script(io::IO, dcout::DCOut)
 	# unique name extraction (TODO: get rid of underscore.js)
 	for (dim, name) in enumerate(names(dcout.df))
 		if eltype(df[dim]) <: AbstractString
-			print(io, "window.", name, "_names = _.chain(data).pluck(\"", name, "\").uniq().value();")
+			println(io, "window.", name, "_names = _.chain(data).pluck(\"", name, "\").uniq().value();")
 		end
 	end
 
@@ -94,7 +94,7 @@ function write_script(io::IO, dcout::DCOut)
 	colnames = names(dcout.df)
 	for chart in dcout.charts
 		name = colnames[chart.dim]
-		write_dcchart(io, chart, 1, :a)
+		write_dcchart(io, chart, 1, name)
 	end
 
 	println(io, "dc.renderAll();")
