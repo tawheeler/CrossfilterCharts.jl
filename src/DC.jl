@@ -15,7 +15,7 @@ function generate_test_df(nrows::Int)
 	# df[:c] = Array(ASCIIString, nrows)
 
 	for i in 1 : nrows
-		df[:a][i] = rand(1:4)
+		df[:a][i] = rand(1:10)
 		df[:b][i] = df[:a][i] + randn()
 		# if df[:b][i] > 2.0
 		# 	df[:c][i] = rand() > 0.5 ? "a" : "b"

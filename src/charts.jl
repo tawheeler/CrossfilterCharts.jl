@@ -5,6 +5,13 @@ type Attribute{T}
 	value::Nullable{T}
 	Attribute(name::Symbol) = new(name, Nullable{T}())
 end
+function Base.deepcopy{T}(a::Attribute{T})
+	retval = Attribute{T}(a.name)
+	if !isnull(a.value)
+		retval.value = deepcopy(a.value)
+	end
+	retval
+end
 const NULL_ATTRIBUTE = Attribute{Void}(:NULL)
 
 type ChartType
@@ -13,6 +20,18 @@ type ChartType
 	ancestors::Vector{ChartType}
 	ChartType{A<:Attribute}(attributes::Vector{A}, ancestors::Vector{ChartType}=ChartType[]) = new("NONE", convert(Vector{Attribute}, attributes), ancestors)
 	ChartType{A<:Attribute}(concreteName::ASCIIString, attributes::Vector{A}, ancestors::Vector{ChartType}=ChartType[]) = new(concreteName, convert(Vector{Attribute}, attributes), ancestors)
+end
+function Base.deepcopy(chart_type::ChartType)
+	name = chart_type.concreteName
+	attributes = Array(Attribute, length(chart_type.attributes))
+	for (i,a) in enumerate(chart_type.attributes)
+		attributes[i] = deepcopy(a)
+	end
+	ancestors = Array(ChartType, length(chart_type.ancestors))
+	for (i,ancestor) in enumerate(chart_type.ancestors)
+		ancestors[i] = deepcopy(ancestor)
+	end
+	ChartType(name, attributes, ancestors)
 end
 function get_all_attributes(chart_type::ChartType)
 	retval = Attribute[]
@@ -57,9 +76,9 @@ function Base.setindex!(chart_type::ChartType, v::Any, s::Symbol)
 	end
 end
 
-BaseChart = ChartType([Attribute{Float64}(:width), Attribute{Float64}(:height)])
-ColorChart = ChartType([Attribute{ASCIIString}(:colors), Attribute{ASCIIString}(:colorAccessor), Attribute{Int}(:colorDomain)])
-CoordinateGridChart = ChartType([Attribute{Tuple{Float64,Float64}}(:zoomScale),
+const BaseChart = ChartType([Attribute{Float64}(:width), Attribute{Float64}(:height)])
+const ColorChart = ChartType([Attribute{ASCIIString}(:colors), Attribute{ASCIIString}(:colorAccessor), Attribute{Int}(:colorDomain)])
+const CoordinateGridChart = ChartType([Attribute{Tuple{Float64,Float64}}(:zoomScale),
 	                             Attribute{Bool}(:zoomOutRestrict), Attribute{Bool}(:mouseZoomable),
 	                             Attribute{ASCIIString}(:x), Attribute{ASCIIString}(:xUnits),
 	                             Attribute{ASCIIString}(:xAxis), Attribute{Bool}(:elasticX),
@@ -70,15 +89,15 @@ CoordinateGridChart = ChartType([Attribute{Tuple{Float64,Float64}}(:zoomScale),
 								[BaseChart, ColorChart])
 # StackableChart = ChartType(false, [Attribute{}])
 
-PieChart = ChartType("pieChart",
+const PieChart = ChartType("pieChart",
 	                 [Attribute{Int}(:slicesCap), Attribute{Float64}(:innerRadius),
 	                  Attribute{Float64}(:radius), Attribute{Float64}(:cx),
 	                  Attribute{Float64}(:cy), Attribute{Float64}(:minAngleForLabel)],
 	                 [ColorChart, BaseChart])
-BarChart = ChartType("barChart",
+const BarChart = ChartType("barChart",
 					 [Attribute{Bool}(:centerBar), Attribute{Float64}(:gap)],
 	                 ChartType[CoordinateGridChart]) # StackableChart
-LineChart = ChartType("lineChart",
+const LineChart = ChartType("lineChart",
 	                  [Attribute{Bool}(:renderArea), Attribute{Float64}(:dotRadius)],
 					  ChartType[CoordinateGridChart]) # StackableChart
 
