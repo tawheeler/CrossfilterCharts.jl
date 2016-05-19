@@ -1,5 +1,3 @@
-
-
 type Attribute{T}
 	name::Symbol
 	value::Nullable{T}
@@ -101,7 +99,16 @@ const LineChart = ChartType("lineChart",
 	                  [Attribute{Bool}(:renderArea), Attribute{Float64}(:dotRadius)],
 					  ChartType[CoordinateGridChart]) # StackableChart
 
-function infer_chart_type{I<:Integer}(arr::DataArray{I})
+can_infer_chart(arr::AbstractDataArray) = false
+can_infer_chart{I<:Integer}(arr::AbstractDataArray{I}) = true
+can_infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}) = true
+# can_infer_chart{S<:AbstractString}(arr::DataArray{S}) = true
+
+infer_chart{I<:Integer}(arr::AbstractDataArray{I}, group) = barchart(arr, group)
+infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group) = barchart(arr, group)
+# infer_chart{S<:AbstractString}(arr::DataArray{S}) = piechart(arr)
+
+function barchart{I<:Integer}(arr::DataArray{I}, group::Group)
 	chart = deepcopy(BarChart)
 	chart[:width] = 250.0
 	chart[:height] = 200.0
@@ -111,7 +118,7 @@ function infer_chart_type{I<:Integer}(arr::DataArray{I})
 	chart[:xUnits] = "dc.units.fp.precision(.0)"
 	chart
 end
-function infer_chart_type{R<:AbstractFloat}(arr::DataArray{R})
+function barchart{F<:AbstractFloat}(arr::DataArray{F}, group::Group)
 	chart = deepcopy(BarChart)
 	chart[:width] = 250.0
 	chart[:height] = 200.0
@@ -122,7 +129,7 @@ function infer_chart_type{R<:AbstractFloat}(arr::DataArray{R})
 	chart[:xUnits] = "dc.units.fp.precision(.5)"
 	chart
 end
-function infer_chart_type{S<:AbstractString}(arr::DataArray{S})
+function piechart{S<:AbstractString}(arr::DataArray{S}, group::Group)
 	chart = deepcopy(PieChart)
 	chart[:width] = 250.0
 	chart[:height] = 200.0
@@ -130,28 +137,27 @@ function infer_chart_type{S<:AbstractString}(arr::DataArray{S})
 end
 
 type DCChart
-	title::ASCIIString
-	dim::Int # dimension; column in DCOut.df
-	parent::ASCIIString
-	group::ASCIIString
+	group::Group
 	typ::ChartType
+	title::ASCIIString
+	parent::ASCIIString
 
 	function DCChart(
 		typ::ChartType,
-		dim::Int,
-		group::ASCIIString,
-		title::ASCIIString,
+		group::Group;
+		title::ASCIIString = "Chart for " * string(group.dim.name),
 		parent::ASCIIString = @sprintf("chart_%06d", rand(0:999999)),
 		)
-		new(title, dim, parent, group, typ)
+
+		new(group, typ, title, parent)
 	end
 end
 
-function write_dcchart(io::IO, chart::DCChart, indent::Int, name::Symbol)
+function Base.write(io::IO, chart::DCChart, indent::Int)
 	tabbing = "  "^indent
-	println(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"\#", chart.parent, "\")") # TODO: add chart group
-	println(io, tabbing, "  .dimension(", name, ")")
-	print(io, tabbing, "  .group(", chart.group, ")")
+	println(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"\#", chart.parent, "\")") # TODO: add chart grouping
+	println(io, tabbing, "  .dimension(", chart.group.dim.name, ")")
+	print(io, tabbing, "  .group(", chart.group.name, ")")
 
 	attributes = get_all_attributes(chart.typ)
 	for (i,a) in enumerate(attributes)
@@ -161,6 +167,8 @@ function write_dcchart(io::IO, chart::DCChart, indent::Int, name::Symbol)
 	end
 	println(io, ";")
 end
+
+
 
 #=
 AbstractBubbleChart <: ColorChart

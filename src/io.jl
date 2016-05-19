@@ -63,38 +63,27 @@ function write_script(io::IO, dcout::DCOut)
 	println(io, "var cf = crossfilter(data);")
 
 	# dimensions
-	for (dim, name) in enumerate(names(dcout.df))
-		print(io, "var ", name, " = cf.dimension(function(d){")
-		if eltype(df[dim]) <: Real
-			print(io, "return Math.round(d.", name, " * 2)/2;")
-		else
-			print(io, "return d.", name, ";")
-		end
-		println(io, "});")
+	for dim in dcout.dims
+		write(io, dim)
+		print(io, "\n")
 	end
 
 	# groups
-	for (dim, name) in enumerate(names(dcout.df))
-		print(io, "var ", name, "_sum = ", name, ".group().")
-		if eltype(df[dim]) <: Real
-			println(io, "reduceSum(function(d){ return d.", name, "; });")
-		else
-			println(io, "reduceCount();")
-		end
+	for group in dcout.groups
+		write(io, group)
+		print(io, "\n")
 	end
 
-	# unique name extraction (TODO: get rid of underscore.js)
-	for (dim, name) in enumerate(names(dcout.df))
-		if eltype(df[dim]) <: AbstractString
-			println(io, "window.", name, "_names = _.chain(data).pluck(\"", name, "\").uniq().value();")
-		end
-	end
+	# # unique name extraction (TODO: get rid of underscore.js)
+	# for (dim, name) in enumerate(names(dcout.df))
+	# 	if eltype(df[dim]) <: AbstractString
+	# 		println(io, "window.", name, "_names = _.chain(data).pluck(\"", name, "\").uniq().value();")
+	# 	end
+	# end
 
 	# charts
-	colnames = names(dcout.df)
 	for chart in dcout.charts
-		name = colnames[chart.dim]
-		write_dcchart(io, chart, 1, name)
+		write(io, chart, 1)
 	end
 
 	println(io, "dc.renderAll();")
@@ -111,7 +100,7 @@ function write_source_html(io::IO, dcout::DCOut)
 	write_script(io, dcout)
 end
 
-function writemime(io::IO, ::MIME"text/html", dcout::DCOut)
+function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 
 
 	# If IJulia is present, go for it
