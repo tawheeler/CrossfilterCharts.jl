@@ -102,13 +102,13 @@ const LineChart = ChartType("lineChart",
 can_infer_chart(arr::AbstractDataArray) = false
 can_infer_chart{I<:Integer}(arr::AbstractDataArray{I}) = true
 can_infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}) = true
-# can_infer_chart{S<:AbstractString}(arr::DataArray{S}) = true
+can_infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}) = true
 
 infer_chart{I<:Integer}(arr::AbstractDataArray{I}, group) = barchart(arr, group)
 infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group) = barchart(arr, group)
-# infer_chart{S<:AbstractString}(arr::DataArray{S}) = piechart(arr)
+infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}, group) = piechart(arr, group)
 
-function barchart{I<:Integer}(arr::DataArray{I}, group::Group)
+function barchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	chart = deepcopy(BarChart)
 	chart[:width] = 250.0
 	chart[:height] = 200.0
@@ -118,7 +118,7 @@ function barchart{I<:Integer}(arr::DataArray{I}, group::Group)
 	chart[:xUnits] = "dc.units.fp.precision(.0)"
 	chart
 end
-function barchart{F<:AbstractFloat}(arr::DataArray{F}, group::Group)
+function barchart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
 	chart = deepcopy(BarChart)
 	chart[:width] = 250.0
 	chart[:height] = 200.0
@@ -129,7 +129,7 @@ function barchart{F<:AbstractFloat}(arr::DataArray{F}, group::Group)
 	chart[:xUnits] = "dc.units.fp.precision(.5)"
 	chart
 end
-function piechart{S<:AbstractString}(arr::DataArray{S}, group::Group)
+function piechart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
 	chart = deepcopy(PieChart)
 	chart[:width] = 250.0
 	chart[:height] = 200.0
