@@ -108,10 +108,13 @@ infer_chart{I<:Integer}(arr::AbstractDataArray{I}, group) = barchart(arr, group)
 infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group) = barchart(arr, group)
 infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}, group) = piechart(arr, group)
 
-function barchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
-	chart = deepcopy(BarChart)
+function size_default!(chart::ChartType)
 	chart[:width] = 250.0
 	chart[:height] = 200.0
+end
+function barchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
+	chart = deepcopy(BarChart)
+	size_default!(chart)
 	chart[:x] = @sprintf("d3.scale.linear().domain([%d,%d])",
 					     floor(Int, minimum(arr)),
 					     ceil(Int, maximum(arr)))
@@ -120,8 +123,7 @@ function barchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 end
 function barchart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
 	chart = deepcopy(BarChart)
-	chart[:width] = 250.0
-	chart[:height] = 200.0
+	size_default!(chart)
 	chart[:centerBar] = true
 	chart[:x] = @sprintf("d3.scale.linear().domain([%d,%d])",
 					     floor(Int, minimum(arr)),
@@ -131,8 +133,12 @@ function barchart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
 end
 function piechart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
 	chart = deepcopy(PieChart)
-	chart[:width] = 250.0
-	chart[:height] = 200.0
+	size_default!(chart)
+	chart
+end
+function piechart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
+	chart = deepcopy(PieChart)
+	size_default!(chart)
 	chart
 end
 
