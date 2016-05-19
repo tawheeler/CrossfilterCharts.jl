@@ -4,23 +4,23 @@
 <body>
   <div style="float:left;">
     <h3>Chart for SepalLength</h3>
-    <div id="chart_442580"></div>
+    <div id="chart_264991"></div>
   </div>
   <div style="float:left;">
     <h3>Chart for SepalWidth</h3>
-    <div id="chart_752063"></div>
+    <div id="chart_713574"></div>
   </div>
   <div style="float:left;">
     <h3>Chart for PetalLength</h3>
-    <div id="chart_185842"></div>
+    <div id="chart_092877"></div>
   </div>
   <div style="float:left;">
     <h3>Chart for PetalWidth</h3>
-    <div id="chart_130774"></div>
+    <div id="chart_115982"></div>
   </div>
   <div style="float:left;">
     <h3>Chart for Species</h3>
-    <div id="chart_089079"></div>
+    <div id="chart_341517"></div>
   </div>
 </body>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'></script>
@@ -40,7 +40,7 @@ var SepalWidth_sum = SepalWidth.group().reduceSum(function(d){ return d.SepalWid
 var PetalLength_sum = PetalLength.group().reduceSum(function(d){ return d.PetalLength; });
 var PetalWidth_sum = PetalWidth.group().reduceSum(function(d){ return d.PetalWidth; });
 var Species_count = Species.group().reduceCount();
-  var chart_442580 = dc.barChart("#chart_442580")
+  var chart_264991 = dc.barChart("#chart_264991")
     .dimension(SepalLength)
     .group(SepalLength_sum)
     .width(250.0)
@@ -48,7 +48,7 @@ var Species_count = Species.group().reduceCount();
     .x(d3.scale.linear().domain([4,8]))
     .xUnits(dc.units.fp.precision(.5))
     .centerBar(true);
-  var chart_752063 = dc.barChart("#chart_752063")
+  var chart_713574 = dc.barChart("#chart_713574")
     .dimension(SepalWidth)
     .group(SepalWidth_sum)
     .width(250.0)
@@ -56,7 +56,7 @@ var Species_count = Species.group().reduceCount();
     .x(d3.scale.linear().domain([2,5]))
     .xUnits(dc.units.fp.precision(.5))
     .centerBar(true);
-  var chart_185842 = dc.barChart("#chart_185842")
+  var chart_092877 = dc.barChart("#chart_092877")
     .dimension(PetalLength)
     .group(PetalLength_sum)
     .width(250.0)
@@ -64,7 +64,7 @@ var Species_count = Species.group().reduceCount();
     .x(d3.scale.linear().domain([1,7]))
     .xUnits(dc.units.fp.precision(.5))
     .centerBar(true);
-  var chart_130774 = dc.barChart("#chart_130774")
+  var chart_115982 = dc.barChart("#chart_115982")
     .dimension(PetalWidth)
     .group(PetalWidth_sum)
     .width(250.0)
@@ -72,7 +72,7 @@ var Species_count = Species.group().reduceCount();
     .x(d3.scale.linear().domain([0,3]))
     .xUnits(dc.units.fp.precision(.5))
     .centerBar(true);
-  var chart_089079 = dc.pieChart("#chart_089079")
+  var chart_341517 = dc.pieChart("#chart_341517")
     .dimension(Species)
     .group(Species_count)
     .width(250.0)
