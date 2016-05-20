@@ -2,13 +2,21 @@ function write_html_head(io::IO)
 	print(io, """
 	<head>
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" rel="stylesheet">
+		<style>
+	    .fake-link {
+	      color: blue;
+	      text-decoration: underline;
+	      cursor: pointer;
+	      font-size: 12px;
+	    }
+	  </style>
 	</head>
 	""")
 end
 function write_html_chart_entry(io::IO, chart::DCChart, indent::Int=0)
 	tabbing = "  "^indent
 	println(io, tabbing, "<div style=\"float:left;\">")
-	println(io, tabbing, "  <h3>", chart.title, "</h3>")
+	println(io, tabbing, "  <h3 id=\"heading_", chart.parent, "\">", chart.title, " </h3>")
 	println(io, tabbing, "  <div id=\"", chart.parent, "\"></div>")
 	println(io, tabbing, "</div>")
 end
@@ -17,6 +25,11 @@ function write_html_body(io::IO, charts::Vector{DCChart})
 	for chart in charts
 		write_html_chart_entry(io, chart, 1)
 	end
+	print(io, """
+	<div style="float:left;">
+    <div id="reset_all_well">&nbsp</div>
+  </div>
+  """)
 	println(io, "</body>")
 end
 function write_script_dependencies{S<:AbstractString}(io::IO, dependencies::Vector{S})
@@ -55,6 +68,78 @@ function write_data(io::IO, df::DataFrame)
 	end
 	println(io, "];")
 end
+function write_reset_script(io::IO, dcout::DCOut)
+	print(io, "var charts = [")
+	for i in 1 : length(dcout.charts)
+		print(io, dcout.charts[i].parent)
+		if i < length(dcout.charts)
+			print(io, ", ")
+		end
+	end
+	println(io, "];")
+	print(io, "var chart_names = [")
+	for i in 1 : length(dcout.charts)
+		print(io, "\"", dcout.charts[i].parent, "\"")
+		if i < length(dcout.charts)
+			print(io, ", ")
+		end
+	end
+	println(io, "];")
+	print(io, """
+var update_reset_buttons = function(chart) {
+  var filter_in_use = false;
+  for (var i = 0; i < charts.length; i++) {
+    if (charts[i].filters().length > 0) {
+      filter_in_use = true;
+      break;
+    }
+  }
+  var idx = charts.indexOf(chart);
+  d3.select("#reset_all_btn").remove();
+  d3.select("#heading_" + chart_names[idx]).select(".chart-reset").remove();
+  if (filter_in_use) {
+    d3.select("#reset_all_well")
+      .append("button")
+      .attr("type", "button")
+      .attr("id", "reset_all_btn")
+      .append("div")
+      .attr("class", "label")
+      .text(function(d) {
+        return "Reset All";
+      })
+      .on("click", function() {
+        for (var i = 0; i < charts.length; i++) {
+          charts[i].filter(null);
+        }
+        dc.redrawAll();
+      });
+    if (chart.filters().length > 0) {
+      d3.select("#heading_" + chart_names[idx])
+        .append("span")
+        .attr("class", "chart-reset fake-link")
+        .text(function(d) {
+          return "Reset";
+        })
+        .on("click", function(d) {
+          chart.filter(null);
+          dc.redrawAll();
+        });
+    }
+  }
+};
+
+for (var i = 0; i < charts.length; i++) {
+  charts[i].on('filtered', function(chart) {
+    update_reset_buttons(chart);
+  });
+}
+	""")
+end
+function quote_corrector() # doesn't actually do anything, just corrects quotes on sublime
+	x = """
+	a"c
+	"""
+end
 function write_script(io::IO, dcout::DCOut)
 	println(io, """<script type="text/javascript">""")
 	write_data(io, dcout.df)
@@ -87,6 +172,8 @@ function write_script(io::IO, dcout::DCOut)
 	end
 
 	println(io, "dc.renderAll();")
+
+	write_reset_script(io, dcout)
 
 	println(io, "</script>")
 end

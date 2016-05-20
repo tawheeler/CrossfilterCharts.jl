@@ -1,28 +1,39 @@
 <head>
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" rel="stylesheet">
+	<style>
+    .fake-link {
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 12px;
+    }
+  </style>
 </head>
 <body>
   <div style="float:left;">
-    <h3>Chart for SepalLength</h3>
-    <div id="chart_264991"></div>
+    <h3 id="heading_chart_272200">Chart for SepalLength </h3>
+    <div id="chart_272200"></div>
   </div>
   <div style="float:left;">
-    <h3>Chart for SepalWidth</h3>
-    <div id="chart_713574"></div>
+    <h3 id="heading_chart_151500">Chart for SepalWidth </h3>
+    <div id="chart_151500"></div>
   </div>
   <div style="float:left;">
-    <h3>Chart for PetalLength</h3>
-    <div id="chart_092877"></div>
+    <h3 id="heading_chart_942008">Chart for PetalLength </h3>
+    <div id="chart_942008"></div>
   </div>
   <div style="float:left;">
-    <h3>Chart for PetalWidth</h3>
-    <div id="chart_115982"></div>
+    <h3 id="heading_chart_044960">Chart for PetalWidth </h3>
+    <div id="chart_044960"></div>
   </div>
   <div style="float:left;">
-    <h3>Chart for Species</h3>
-    <div id="chart_341517"></div>
+    <h3 id="heading_chart_080024">Chart for Species </h3>
+    <div id="chart_080024"></div>
   </div>
-</body>
+	<div style="float:left;">
+    <div id="reset_all_well">&nbsp</div>
+  </div>
+  </body>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js'></script>
 <script src='https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter.js'></script>
@@ -40,7 +51,7 @@ var SepalWidth_sum = SepalWidth.group().reduceSum(function(d){ return d.SepalWid
 var PetalLength_sum = PetalLength.group().reduceSum(function(d){ return d.PetalLength; });
 var PetalWidth_sum = PetalWidth.group().reduceSum(function(d){ return d.PetalWidth; });
 var Species_count = Species.group().reduceCount();
-  var chart_264991 = dc.barChart("#chart_264991")
+  var chart_272200 = dc.barChart("#chart_272200")
     .dimension(SepalLength)
     .group(SepalLength_sum)
     .width(250.0)
@@ -48,7 +59,7 @@ var Species_count = Species.group().reduceCount();
     .x(d3.scale.linear().domain([4,8]))
     .xUnits(dc.units.fp.precision(.5))
     .centerBar(true);
-  var chart_713574 = dc.barChart("#chart_713574")
+  var chart_151500 = dc.barChart("#chart_151500")
     .dimension(SepalWidth)
     .group(SepalWidth_sum)
     .width(250.0)
@@ -56,7 +67,7 @@ var Species_count = Species.group().reduceCount();
     .x(d3.scale.linear().domain([2,5]))
     .xUnits(dc.units.fp.precision(.5))
     .centerBar(true);
-  var chart_092877 = dc.barChart("#chart_092877")
+  var chart_942008 = dc.barChart("#chart_942008")
     .dimension(PetalLength)
     .group(PetalLength_sum)
     .width(250.0)
@@ -64,7 +75,7 @@ var Species_count = Species.group().reduceCount();
     .x(d3.scale.linear().domain([1,7]))
     .xUnits(dc.units.fp.precision(.5))
     .centerBar(true);
-  var chart_115982 = dc.barChart("#chart_115982")
+  var chart_044960 = dc.barChart("#chart_044960")
     .dimension(PetalWidth)
     .group(PetalWidth_sum)
     .width(250.0)
@@ -72,10 +83,59 @@ var Species_count = Species.group().reduceCount();
     .x(d3.scale.linear().domain([0,3]))
     .xUnits(dc.units.fp.precision(.5))
     .centerBar(true);
-  var chart_341517 = dc.pieChart("#chart_341517")
+  var chart_080024 = dc.pieChart("#chart_080024")
     .dimension(Species)
     .group(Species_count)
     .width(250.0)
     .height(200.0);
 dc.renderAll();
-</script>
+var charts = [chart_272200, chart_151500, chart_942008, chart_044960, chart_080024];
+var chart_names = ["chart_272200", "chart_151500", "chart_942008", "chart_044960", "chart_080024"];
+var update_reset_buttons = function(chart) {
+  var filter_in_use = false;
+  for (var i = 0; i < charts.length; i++) {
+    if (charts[i].filters().length > 0) {
+      filter_in_use = true;
+      break;
+    }
+  }
+  var idx = charts.indexOf(chart);
+  d3.select("#reset_all_btn").remove();
+  d3.select("#heading_" + chart_names[idx]).select(".chart-reset").remove();
+  if (filter_in_use) {
+    d3.select("#reset_all_well")
+      .append("button")
+      .attr("type", "button")
+      .attr("id", "reset_all_btn")
+      .append("div")
+      .attr("class", "label")
+      .text(function(d) {
+        return "Reset All";
+      })
+      .on("click", function() {
+        for (var i = 0; i < charts.length; i++) {
+          charts[i].filter(null);
+        }
+        dc.redrawAll();
+      });
+    if (chart.filters().length > 0) {
+      d3.select("#heading_" + chart_names[idx])
+        .append("span")
+        .attr("class", "chart-reset fake-link")
+        .text(function(d) {
+          return "Reset";
+        })
+        .on("click", function(d) {
+          chart.filter(null);
+          dc.redrawAll();
+        });
+    }
+  }
+};
+
+for (var i = 0; i < charts.length; i++) {
+  charts[i].on('filtered', function(chart) {
+    update_reset_buttons(chart);
+  });
+}
+	</script>
