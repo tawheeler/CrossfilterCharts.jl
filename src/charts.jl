@@ -1,16 +1,9 @@
-type Attribute{T}
+type Attribute
 	name::Symbol
-	value::Nullable{T}
-	Attribute(name::Symbol) = new(name, Nullable{T}())
+	value::ASCIIString
+	Attribute(name::Symbol) = new(name, "")
 end
-function Base.deepcopy{T}(a::Attribute{T})
-	retval = Attribute{T}(a.name)
-	if !isnull(a.value)
-		retval.value = deepcopy(a.value)
-	end
-	retval
-end
-const NULL_ATTRIBUTE = Attribute{Void}(:NULL)
+const NULL_ATTRIBUTE = Attribute(:NULL)
 
 type ChartType
 	concreteName::ASCIIString
@@ -55,11 +48,10 @@ function Base.getindex(chart_type::ChartType, s::Symbol)
 
 	NULL_ATTRIBUTE
 end
-function Base.setindex!(chart_type::ChartType, v::Any, s::Symbol)
+function Base.setindex!(chart_type::ChartType, v::ASCIIString, s::Symbol)
 	for a in chart_type.attributes
 		if a.name == s
-			@assert(isa(v, eltype(a.value)))
-			a.value = Nullable(v)
+			a.value = v
 			return
 		end
 	end
@@ -67,37 +59,36 @@ function Base.setindex!(chart_type::ChartType, v::Any, s::Symbol)
 	for ancestor in chart_type.ancestors
 		a = ancestor[s]
 		if a.name != :NULL
-			@assert(isa(v, eltype(a.value)))
-			a.value = Nullable(v)
+			a.value = v
 			return
 		end
 	end
 end
 
-const BaseChart = ChartType([Attribute{Float64}(:width), Attribute{Float64}(:height)])
-const ColorChart = ChartType([Attribute{ASCIIString}(:colors), Attribute{ASCIIString}(:colorAccessor), Attribute{Int}(:colorDomain)])
-const CoordinateGridChart = ChartType([Attribute{Tuple{Float64,Float64}}(:zoomScale),
-	                             Attribute{Bool}(:zoomOutRestrict), Attribute{Bool}(:mouseZoomable),
-	                             Attribute{ASCIIString}(:x), Attribute{ASCIIString}(:xUnits),
-	                             Attribute{ASCIIString}(:xAxis), Attribute{Bool}(:elasticX),
-	                             Attribute{ASCIIString}(:xAxisPadding), Attribute{Float64}(:y),
-	                             Attribute{ASCIIString}(:yAxis), Attribute{Float64}(:elasticY),
-	                             Attribute{Bool}(:renderHorizontalGridLines), Attribute{Bool}(:renderVerticalGridLines),
-	                             Attribute{Union{Int,ASCIIString}}(:yAxisPadding), Attribute{ASCIIString}(:round)],
+const BaseChart = ChartType([Attribute(:width), Attribute(:height)])
+const ColorChart = ChartType([Attribute(:colors), Attribute(:colorAccessor), Attribute(:colorDomain)])
+const CoordinateGridChart = ChartType([Attribute(:zoomScale),
+	                             Attribute(:zoomOutRestrict), Attribute(:mouseZoomable),
+	                             Attribute(:x), Attribute(:xUnits),
+	                             Attribute(:xAxis), Attribute(:elasticX),
+	                             Attribute(:xAxisPadding), Attribute(:y),
+	                             Attribute(:yAxis), Attribute(:elasticY),
+	                             Attribute(:renderHorizontalGridLines), Attribute(:renderVerticalGridLines),
+	                             Attribute(:yAxisPadding), Attribute(:round)],
 								[BaseChart, ColorChart])
 # StackableChart = ChartType(false, [Attribute{}])
 
 const PieChart = ChartType("pieChart",
-	                 [Attribute{Int}(:slicesCap), Attribute{Float64}(:innerRadius),
-	                  Attribute{Float64}(:radius), Attribute{Float64}(:cx),
-	                  Attribute{Float64}(:cy), Attribute{Float64}(:minAngleForLabel)],
+	                 [Attribute(:slicesCap), Attribute(:innerRadius),
+	                  Attribute(:radius), Attribute(:cx),
+	                  Attribute(:cy), Attribute(:minAngleForLabel)],
 	                 [ColorChart, BaseChart])
 const BarChart = ChartType("barChart",
-					 [Attribute{Bool}(:centerBar), Attribute{Float64}(:gap)],
-	                 ChartType[CoordinateGridChart]) # StackableChart
+					 [Attribute(:centerBar), Attribute(:gap)],
+	                 [CoordinateGridChart]) # StackableChart
 const LineChart = ChartType("lineChart",
-	                  [Attribute{Bool}(:renderArea), Attribute{Float64}(:dotRadius)],
-					  ChartType[CoordinateGridChart]) # StackableChart
+	                  [Attribute(:renderArea), Attribute(:dotRadius)],
+					  [CoordinateGridChart]) # StackableChart
 
 can_infer_chart(arr::AbstractDataArray) = false
 can_infer_chart{I<:Integer}(arr::AbstractDataArray{I}) = true
@@ -109,8 +100,8 @@ infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group) = barchart(arr, 
 infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}, group) = piechart(arr, group)
 
 function size_default!(chart::ChartType)
-	chart[:width] = 250.0
-	chart[:height] = 200.0
+	chart[:width] = "250.0"
+	chart[:height] = "200.0"
 end
 function barchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	chart = deepcopy(BarChart)
@@ -124,7 +115,7 @@ end
 function barchart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
 	chart = deepcopy(BarChart)
 	size_default!(chart)
-	chart[:centerBar] = true
+	chart[:centerBar] = "true"
 	chart[:x] = @sprintf("d3.scale.linear().domain([%d,%d])",
 					     floor(Int, minimum(arr)),
 					     ceil(Int, maximum(arr)))
@@ -167,8 +158,8 @@ function Base.write(io::IO, chart::DCChart, indent::Int)
 
 	attributes = get_all_attributes(chart.typ)
 	for (i,a) in enumerate(attributes)
-		if !isnull(a.value)
-			print(io, "\n", tabbing, "  .", string(a.name), "(", get(a.value), ")")
+		if !isempty(a.value)
+			print(io, "\n", tabbing, "  .", string(a.name), "(", a.value, ")")
 		end
 	end
 	println(io, ";")
