@@ -1,0 +1,14 @@
+{
+    "docs": [
+        {
+            "location": "/", 
+            "text": "DC.jl Documentation\n\n\n#\n\n\nDC.infer_dimension\n \n \nMethod\n.\n\n\ninfer_dimension(arr::AbstractDataArray, name::Symbol)\n\n\n\n\nConstructs a Dimension suitable for the type in arr.\n\n\nsource", 
+            "title": "Home"
+        }, 
+        {
+            "location": "/#dcjl-documentation", 
+            "text": "#  DC.infer_dimension     Method .  infer_dimension(arr::AbstractDataArray, name::Symbol)  Constructs a Dimension suitable for the type in arr.  source", 
+            "title": "DC.jl Documentation"
+        }
+    ]
+}
