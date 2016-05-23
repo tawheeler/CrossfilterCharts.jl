@@ -2,12 +2,12 @@
     "docs": [
         {
             "location": "/", 
-            "text": "DC.jl Documentation\n\n\n#\n\n\nDC.infer_dimension\n \n \nMethod\n.\n\n\ninfer_dimension(arr::AbstractDataArray, name::Symbol)\n\n\n\n\nConstructs a Dimension suitable for the type in arr.\n\n\nsource", 
+            "text": "DC.jl Documentation\n\n\n#\n\n\nDC.dc\n \n \nFunction\n.\n\n\ndc(df::DataFrame)\n\n\n\n\nConstruct a DC.js visualization based on the columns in the given DataFrame.\n\n\nsource\n\n\n#\n\n\nDC.can_infer_chart\n \n \nFunction\n.\n\n\ncan_infer_chart(arr::AbstractDataArray)\n\n\n\n\nWhether chart inference is supported for the given array type.\n\n\nsource\n\n\n#\n\n\nDC.infer_chart\n \n \nFunction\n.\n\n\ninfer_chart(arr::AbstractDataArray, group::Group)\n\n\n\n\nConstructs a Chart suitable for the type in arr.\n\n\nsource\n\n\n#\n\n\nDC.infer_dimension\n \n \nFunction\n.\n\n\ninfer_dimension(arr::AbstractDataArray, name::Symbol)\n\n\n\n\nConstructs a Dimension suitable for the type in arr.\n\n\nsource", 
             "title": "Home"
         }, 
         {
             "location": "/#dcjl-documentation", 
-            "text": "#  DC.infer_dimension     Method .  infer_dimension(arr::AbstractDataArray, name::Symbol)  Constructs a Dimension suitable for the type in arr.  source", 
+            "text": "#  DC.dc     Function .  dc(df::DataFrame)  Construct a DC.js visualization based on the columns in the given DataFrame.  source  #  DC.can_infer_chart     Function .  can_infer_chart(arr::AbstractDataArray)  Whether chart inference is supported for the given array type.  source  #  DC.infer_chart     Function .  infer_chart(arr::AbstractDataArray, group::Group)  Constructs a Chart suitable for the type in arr.  source  #  DC.infer_dimension     Function .  infer_dimension(arr::AbstractDataArray, name::Symbol)  Constructs a Dimension suitable for the type in arr.  source", 
             "title": "DC.jl Documentation"
         }
     ]
