@@ -1,0 +1,24 @@
+site_name:        DC.jl
+repo_url:         https://github.com/tawheeler/DC.jl
+site_description: A Julia package for automagical DC.js linked charts in your IJulia notebook
+site_author:      tawheeler
+
+theme: readthedocs
+
+extra_css:
+  - assets/Documenter.css
+
+extra_javascript:
+  - https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+  - assets/mathjaxhelper.js
+
+markdown_extensions:
+  - extra
+  - tables
+  - fenced_code
+  - mdx_math
+
+docs_dir: 'build'
+
+pages:
+  - Home: index.md

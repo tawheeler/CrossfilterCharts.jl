@@ -3,6 +3,11 @@ type Dimension
 	accessor::ASCIIString # this lets us do: var paymentsByTotal = payments.dimension(function(d) { return d.total; });
 end
 
+"""
+	infer_dimension(arr::AbstractDataArray, name::Symbol)
+
+Constructs a Dimension suitable for the type in arr.
+"""
 function infer_dimension{I<:Integer}(arr::AbstractDataArray{I}, name::Symbol)
 	accessor = @sprintf("function(d){return d.%s; }", name)
 	Dimension(name, accessor)
