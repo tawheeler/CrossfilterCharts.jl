@@ -3,5 +3,6 @@ using DataFrames, Documenter, DC
 makedocs()
 
 deploydocs(
-    repo = "github.com/tawheeler/DC.jl.git"
+    deps   = Deps.pip("mkdocs", "python-markdown-math"),
+    repo   = "github.com/tawheeler/DC.jl.git"
 )
