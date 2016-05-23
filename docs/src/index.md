@@ -1,5 +1,8 @@
 # DC.jl Documentation
 
 ```@docs
-infer_dimension(arr::AbstractDataArray, name::Symbol)
+dc
+can_infer_chart
+infer_chart
+infer_dimension
 ```

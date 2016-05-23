@@ -1,6 +1,10 @@
 using DataFrames, Documenter, DC
 
-makedocs()
+makedocs(
+    # options
+    modules = [DC]
+)
+
 
 deploydocs(
     deps   = Deps.pip("mkdocs", "python-markdown-math"),

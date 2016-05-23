@@ -29,4 +29,9 @@ type DCOut
 	end
 end
 
+"""
+	dc(df::DataFrame)
+
+Construct a DC.js visualization based on the columns in the given DataFrame.
+"""
 dc(df::DataFrame) = DCOut(df)

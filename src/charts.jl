@@ -90,14 +90,24 @@ const LineChart = ChartType("lineChart",
 	                  [Attribute(:renderArea), Attribute(:dotRadius)],
 					  [CoordinateGridChart]) # StackableChart
 
+"""
+	can_infer_chart(arr::AbstractDataArray)
+
+Whether chart inference is supported for the given array type.
+"""
 can_infer_chart(arr::AbstractDataArray) = false
 can_infer_chart{I<:Integer}(arr::AbstractDataArray{I}) = true
 can_infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}) = true
 can_infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}) = true
 
-infer_chart{I<:Integer}(arr::AbstractDataArray{I}, group) = barchart(arr, group)
-infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group) = barchart(arr, group)
-infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}, group) = piechart(arr, group)
+"""
+	infer_chart(arr::AbstractDataArray, group::Group)
+
+Constructs a Chart suitable for the type in arr.
+"""
+infer_chart{I<:Integer}(arr::AbstractDataArray{I}, group::Group) = barchart(arr, group)
+infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group) = barchart(arr, group)
+infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group) = piechart(arr, group)
 
 function size_default!(chart::ChartType)
 	chart[:width] = "250.0"
