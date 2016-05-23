@@ -1,0 +1,17 @@
+# Documentation: http://docs.travis-ci.com/user/languages/julia/
+language: julia
+os:
+  - linux
+  # - osx
+julia:
+  - release
+  - nightly
+notifications:
+  email: false
+script:
+  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+  - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.test("DC"; coverage=true)'
+after_success:
+  - julia -e 'Pkg.clone("https://github.com/MichaelHatherly/Documenter.jl")'
+  - julia -e 'cd(Pkg.dir("DC")); include(joinpath("docs", "make.jl"))'
+  - julia -e 'cd(Pkg.dir("DC")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
