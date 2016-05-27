@@ -11,3 +11,7 @@ Just open a Julia terminal and run:
 ```julia
 Pkg.clone("https://github.com/tawheeler/DC.jl.git")
 ```
+
+## Docs
+
+Documentation is available both via the Documenter.jl badges at the top of this page or in a [demonstration IJulia notebook](http://nbviewer.ipython.org/github/tawheeler/DC.jl/blob/master/docs/DC.ipynb).
