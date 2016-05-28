@@ -29,6 +29,23 @@ type DCOut
 	end
 end
 
+type NotInferrableError <: Exception end
+
+function quick_add(dcout::DCOut, column::Symbol, chart_constructor::Function)
+	if can_infer_chart(dcout.df[column])
+		i = 0
+		for i in 1 : length(dcout.dims)
+			if (dcout.dims[i].name == column)
+				break
+			end
+		end
+		new_chart = chart_constructor(dcout.df[column], dcout.groups[i])
+		push!(dcout.charts, DCChart(new_chart, dcout.groups[i]))
+	else
+		throw(NotInferrableError())
+	end
+end
+
 """
 	dc(df::DataFrame)
 

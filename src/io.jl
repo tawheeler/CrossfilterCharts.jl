@@ -197,11 +197,19 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		2 - generate iframe html + js page
 		3 - write link to it
 		=#
-		filename = tempname() * ".htm"
-		fout = open(filename, "w")
+		
+		iframe_width = 975 # [pix]
+		row_height = 275 # [pix]
+
+		ncharts = length(dcout.charts)
+		nrows = ceil(Int, ncharts/3)
+		iframe_height = nrows*275
+
+		iframe_name = @sprintf("dc%06d.htm", rand(0:999999))
+		fout = open(iframe_name, "w")
 		write_source_html(fout, dcout)
 		close(fout)
-		write(io, """<iframe src=\"$filename\" width="975" height="500"></iframe>""")
+		write(io, """<iframe src="$iframe_name" width="$iframe_width" height="$iframe_height"></iframe>""")
 	else
 		# TODO
 		# decide what to do in the absence of IJulia

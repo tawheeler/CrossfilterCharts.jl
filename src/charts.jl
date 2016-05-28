@@ -76,6 +76,10 @@ const CoordinateGridChart = ChartType([Attribute(:zoomScale),
 	                             Attribute(:renderHorizontalGridLines), Attribute(:renderVerticalGridLines),
 	                             Attribute(:yAxisPadding), Attribute(:round)],
 								[BaseChart, ColorChart])
+const AbstractBubbleChart = ChartType([Attribute(:r), Attribute(:radiusValueAccessor),
+										 									 Attribute(:minRadiusWithLabel), Attribute(:maxBubbleRelativeSize)],
+										 									[ColorChart])
+
 # StackableChart = ChartType(false, [Attribute{}])
 
 const PieChart = ChartType("pieChart",
@@ -89,6 +93,17 @@ const BarChart = ChartType("barChart",
 const LineChart = ChartType("lineChart",
 	                  [Attribute(:renderArea), Attribute(:dotRadius)],
 					  [CoordinateGridChart]) # StackableChart
+const RowChart = ChartType("rowChart",
+										[Attribute(:gap), Attribute(:elasticX),
+										 Attribute(:labelOffsetX), Attribute(:labelOffsetY)],
+										 [ColorChart, BaseChart])
+const BubbleChart = ChartType("bubbleChart",
+										[Attribute(:elasticRadius)],
+										 [AbstractBubbleChart, CoordinateGridChart])
+const DataTableWidget = ChartType("dataTable",
+									 [Attribute(:size), Attribute(:columns),
+									  Attribute(:sortBy), Attribute(:order)],
+									 [BaseChart])
 
 """
 	can_infer_chart(arr::AbstractDataArray)
@@ -109,16 +124,25 @@ infer_chart{I<:Integer}(arr::AbstractDataArray{I}, group::Group) = barchart(arr,
 infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group) = barchart(arr, group)
 infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group) = piechart(arr, group)
 
+function scale_default{F<:AbstractFloat}(arr::AbstractDataArray{F})
+	@sprintf("d3.scale.linear().domain([%d,%d])",
+					     floor(Int, minimum(arr)),
+					     ceil(Int, maximum(arr)))
+end
+function scale_default{I<:Integer}(arr::AbstractDataArray{I})
+	@sprintf("d3.scale.linear().domain([%d,%d])",
+					     floor(Int, minimum(arr)),
+					     ceil(Int, maximum(arr)))
+end
 function size_default!(chart::ChartType)
 	chart[:width] = "250.0"
 	chart[:height] = "200.0"
 end
+
 function barchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	chart = deepcopy(BarChart)
 	size_default!(chart)
-	chart[:x] = @sprintf("d3.scale.linear().domain([%d,%d])",
-					     floor(Int, minimum(arr)),
-					     ceil(Int, maximum(arr)))
+	chart[:x] = scale_default(arr)
 	chart[:xUnits] = "dc.units.fp.precision(.0)"
 	chart
 end
@@ -126,10 +150,8 @@ function barchart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
 	chart = deepcopy(BarChart)
 	size_default!(chart)
 	chart[:centerBar] = "true"
-	chart[:x] = @sprintf("d3.scale.linear().domain([%d,%d])",
-					     floor(Int, minimum(arr)),
-					     ceil(Int, maximum(arr)))
-	chart[:xUnits] = "dc.units.fp.precision(.5)"
+	chart[:x] = scale_default(arr)
+	chart[:xUnits] = "dc.units.fp.precision(.1)"
 	chart
 end
 function piechart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
@@ -140,6 +162,18 @@ end
 function piechart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	chart = deepcopy(PieChart)
 	size_default!(chart)
+	chart
+end
+function linechart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
+	chart = deepcopy(LineChart)
+	size_default!(chart)
+	chart[:x] = scale_default(arr)
+	chart
+end
+function linechart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
+	chart = deepcopy(LineChart)
+	size_default!(chart)
+	chart[:x] = scale_default(arr)
 	chart
 end
 
@@ -178,7 +212,6 @@ end
 
 
 #=
-AbstractBubbleChart <: ColorChart
 DataCountWidget <: BaseChart
 DataTableWidget <: BaseChart
 BubbleChart <: AbstractBubbleChart, CoordinateGridChart

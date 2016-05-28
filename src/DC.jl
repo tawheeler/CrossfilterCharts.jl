@@ -19,6 +19,7 @@ export
 
 	barchart,
 	piechart,
+	linechart,
 
 	reduce_count,
 	reduce_sum,
