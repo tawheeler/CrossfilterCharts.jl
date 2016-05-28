@@ -129,7 +129,8 @@ function barchart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
 	chart[:x] = @sprintf("d3.scale.linear().domain([%d,%d])",
 					     floor(Int, minimum(arr)),
 					     ceil(Int, maximum(arr)))
-	chart[:xUnits] = "dc.units.fp.precision(.5)"
+	chart[:xUnits] = "dc.units.fp.precision(.1)"
+	chart[:gap] = "1"
 	chart
 end
 function piechart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
