@@ -197,10 +197,11 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		2 - generate iframe html + js page
 		3 - write link to it
 		=#
-		fout = open("test.htm", "w")
+		filename = tempname() * ".htm"
+		fout = open(filename, "w")
 		write_source_html(fout, dcout)
 		close(fout)
-		write(io, """<iframe src="test.htm" width="975" height="500"></iframe>""")
+		write(io, """<iframe src=\"$filename\" width="975" height="500"></iframe>""")
 	else
 		# TODO
 		# decide what to do in the absence of IJulia
