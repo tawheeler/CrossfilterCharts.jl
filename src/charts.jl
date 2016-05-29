@@ -124,12 +124,7 @@ infer_chart{I<:Integer}(arr::AbstractDataArray{I}, group::Group) = barchart(arr,
 infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group) = barchart(arr, group)
 infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group) = piechart(arr, group)
 
-function scale_default{F<:AbstractFloat}(arr::AbstractDataArray{F})
-	@sprintf("d3.scale.linear().domain([%d,%d])",
-					     floor(Int, minimum(arr)),
-					     ceil(Int, maximum(arr)))
-end
-function scale_default{I<:Integer}(arr::AbstractDataArray{I})
+function scale_default{R<:Real}(arr::AbstractDataArray{R})
 	@sprintf("d3.scale.linear().domain([%d,%d])",
 					     floor(Int, minimum(arr)),
 					     ceil(Int, maximum(arr)))
@@ -164,16 +159,16 @@ function piechart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	size_default!(chart)
 	chart
 end
-function linechart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
+function linechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart = deepcopy(LineChart)
 	size_default!(chart)
 	chart[:x] = scale_default(arr)
 	chart
 end
-function linechart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
-	chart = deepcopy(LineChart)
-	size_default!(chart)
+function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
+	chart = deepcopy(BubbleChart)
 	chart[:x] = scale_default(arr)
+	chart[:radiusValueAccessor] = ""
 	chart
 end
 

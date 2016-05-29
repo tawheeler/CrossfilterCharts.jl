@@ -46,6 +46,11 @@ function quick_add(dcout::DCOut, column::Symbol, chart_constructor::Function)
 	end
 end
 
+function clear_charts(dcout::DCOut)
+	dcout.charts = DCChart[]
+	Union{}
+end
+
 """
 	dc(df::DataFrame)
 
