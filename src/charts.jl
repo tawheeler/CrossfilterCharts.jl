@@ -139,7 +139,7 @@ function barchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	size_default!(chart)
 	chart[:x] = scale_default(arr)
 	chart[:xUnits] = "dc.units.fp.precision(.0)"
-	chart
+	DCChart(chart, group)
 end
 function barchart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
 	chart = deepcopy(BarChart)
@@ -147,34 +147,34 @@ function barchart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
 	chart[:centerBar] = "true"
 	chart[:x] = scale_default(arr)
 	chart[:xUnits] = "dc.units.fp.precision(.1)"
-	chart
+	DCChart(chart, group)
 end
 function piechart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
 	chart = deepcopy(PieChart)
 	size_default!(chart)
-	chart
+	DCChart(chart, group)
 end
 function piechart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	chart = deepcopy(PieChart)
 	size_default!(chart)
-	chart
+	DCChart(chart, group)
 end
 # TODO: Use different xUnits on Float and Int
 function linechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart = deepcopy(LineChart)
 	size_default!(chart)
 	chart[:x] = scale_default(arr)
-	chart
+	DCChart(chart, group)
 end
 function rowchart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
 	chart = deepcopy(RowChart)
 	size_default!(chart)
-	chart
+	DCChart(chart, group)
 end
 function rowchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	chart = deepcopy(RowChart)
 	size_default!(chart)
-	chart
+	DCChart(chart, group)
 end
 #=
 function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)

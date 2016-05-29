@@ -20,7 +20,7 @@ type DCOut
 				group = infer_group(arr, dim)
 				push!(groups, group)
 
-				chart = DCChart(infer_chart(arr, group), group)
+				chart = infer_chart(arr, group)
 				push!(charts, chart)
 			end
 		end
@@ -40,7 +40,7 @@ function quick_add(dcout::DCOut, column::Symbol, chart_constructor::Function)
 			end
 		end
 		new_chart = chart_constructor(dcout.df[column], dcout.groups[i])
-		push!(dcout.charts, DCChart(new_chart, dcout.groups[i]))
+		push!(dcout.charts, new_chart)
 	else
 		throw(NotInferrableError())
 	end
