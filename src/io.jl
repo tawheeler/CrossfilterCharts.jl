@@ -197,7 +197,7 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		2 - generate iframe html + js page
 		3 - write link to it
 		=#
-		iframe_name = @sprintf("dc%06d.htm", rand(0:999999))
+		iframe_name = @sprintf("dc%s.htm", Dates.format(now(), "yyyymmdd_HHMMSS"))
 		fout = open(iframe_name, "w")
 		write_source_html(fout, dcout)
 		close(fout)
