@@ -146,7 +146,7 @@ function barchart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
 	size_default!(chart)
 	chart[:centerBar] = "true"
 	chart[:x] = scale_default(arr)
-	chart[:xUnits] = "dc.units.fp.precision(.5)"
+	chart[:xUnits] = "dc.units.fp.precision(.1)"
 	chart
 end
 function piechart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
