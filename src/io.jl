@@ -1,3 +1,5 @@
+
+
 function write_html_head(io::IO)
 	print(io, """
 	<head>
@@ -32,10 +34,18 @@ function write_html_body(io::IO, charts::Vector{DCChart})
   """)
 	println(io, "</body>")
 end
-function write_script_dependencies{S<:AbstractString}(io::IO, dependencies::Vector{S})
-	for src in dependencies
+function write_script_dependencies{S<:AbstractString}(io::IO, dependencies::Vector{Tuple{S, S, Bool}})
+  print(io, """require.config({paths: {""")
+	for i in 1 : length(dependencies)
+    #=
 		@printf(io, "<script src='%s'></script>\n", src)
+    =#
+    @printf(io, """ "%s": "%s" """, dependencies[i][1], dependencies[i][2])
+    if i < length(dependencies)
+      print(io, ",\n")
+    end
 	end
+  print(io, """}});\n""")
 end
 function write_json_entry(io, names::Vector{Symbol}, values::Vector{Any})
 	print(io, "{")
@@ -140,8 +150,39 @@ function quote_corrector() # doesn't actually do anything, just corrects quotes 
 	a"c
 	"""
 end
-function write_script(io::IO, dcout::DCOut)
+function write_script{S<:AbstractString}(io::IO, dcout::DCOut, dependencies::Vector{Tuple{S, S, Bool}})
 	println(io, """<script type="text/javascript">""")
+  
+  write_script_dependencies(io, dependencies)
+  print(io, "require([")
+  for i in 1 : length(dependencies)
+    print(io, "\"", dependencies[i][1], "\"")
+    if i < length(dependencies)
+      print(io, ", ")
+    end
+  end
+  print(io, "], function(")
+  unused_counter = 1;
+  for i in 1 : length(dependencies)
+    if (dependencies[i][3])
+      print(io, dependencies[i][1])
+    else
+      print(io, "unused", unused_counter)
+      unused_counter += 1
+    end
+    if i < length(dependencies)
+      print(io, ", ")
+    end
+  end
+  print(io, ") {\n")
+  #=
+  print(io, """require.config({paths: {"_": "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min" ,
+ "d3": "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min" ,
+ "crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter" ,
+ "dc": "https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.1/dc" }});
+
+require(["_", "d3", "crossfilter", "dc"], function(_, d3, _unused, dc) {""")
+  =#
 	write_data(io, dcout.df)
 
 	# crossfilter
@@ -175,16 +216,18 @@ function write_script(io::IO, dcout::DCOut)
 
 	write_reset_script(io, dcout)
 
-	println(io, "</script>")
+	println(io, "});
+</script>")
 end
 function write_source_html(io::IO, dcout::DCOut)
 	write_html_head(io)
 	write_html_body(io, dcout.charts)
-	write_script_dependencies(io, ["https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js",
-								   "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js",
-								   "https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter.js",
-								   "https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.1/dc.js"])
-	write_script(io, dcout)
+  # Note: dependencies must be ordered! (hence why this is not a dictionary)
+  dependencies = [("_","https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min", true),
+                  ("d3","https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min", true),
+                  ("crossfilter","https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter", false),
+                  ("dc","https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.1/dc", true)]
+	write_script(io, dcout, dependencies)
 end
 
 function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
@@ -198,10 +241,15 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		3 - write link to it
 		=#
 		iframe_name = @sprintf("dc%s.htm", Dates.format(now(), "yyyymmdd_HHMMSS"))
+    #=
 		fout = open(iframe_name, "w")
 		write_source_html(fout, dcout)
 		close(fout)
 		write(io, """<iframe src="$iframe_name" width="975" height="550"></iframe>""")
+    =#
+    write(io, """<div style="width:900px; height: 500px;">""")
+    write_source_html(io, dcout)
+    write(io, """</div>""")
 	else
 		# TODO
 		# decide what to do in the absence of IJulia
