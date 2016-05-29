@@ -1,8 +1,11 @@
-
+type Dependency
+  name::ASCIIString
+  path::ASCIIString
+  has_export::Bool
+end
 
 function write_html_head(io::IO)
 	print(io, """
-	<head>
 		<link href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" rel="stylesheet">
 		<style>
 	    .fake-link {
@@ -11,8 +14,10 @@ function write_html_head(io::IO)
 	      cursor: pointer;
 	      font-size: 12px;
 	    }
+      button-label {
+
+      }
 	  </style>
-	</head>
 	""")
 end
 function write_html_chart_entry(io::IO, chart::DCChart, indent::Int=0)
@@ -34,13 +39,13 @@ function write_html_body(io::IO, charts::Vector{DCChart})
   """)
 	println(io, "</body>")
 end
-function write_script_dependencies{S<:AbstractString}(io::IO, dependencies::Vector{Tuple{S, S, Bool}})
+function write_script_dependencies(io::IO, dependencies::Vector{Dependency})
   print(io, """require.config({paths: {""")
 	for i in 1 : length(dependencies)
     #=
 		@printf(io, "<script src='%s'></script>\n", src)
     =#
-    @printf(io, """ "%s": "%s" """, dependencies[i][1], dependencies[i][2])
+    @printf(io, """ "%s": "%s" """, dependencies[i].name, dependencies[i].path)
     if i < length(dependencies)
       print(io, ",\n")
     end
@@ -113,7 +118,7 @@ var update_reset_buttons = function(chart) {
       .attr("type", "button")
       .attr("id", "reset_all_btn")
       .append("div")
-      .attr("class", "label")
+      .attr("class", "button-label")
       .text(function(d) {
         return "Reset All";
       })
@@ -150,13 +155,13 @@ function quote_corrector() # doesn't actually do anything, just corrects quotes 
 	a"c
 	"""
 end
-function write_script{S<:AbstractString}(io::IO, dcout::DCOut, dependencies::Vector{Tuple{S, S, Bool}})
+function write_script(io::IO, dcout::DCOut, dependencies::Vector{Dependency})
 	println(io, """<script type="text/javascript">""")
   
   write_script_dependencies(io, dependencies)
   print(io, "require([")
   for i in 1 : length(dependencies)
-    print(io, "\"", dependencies[i][1], "\"")
+    print(io, "\"", dependencies[i].name, "\"")
     if i < length(dependencies)
       print(io, ", ")
     end
@@ -164,8 +169,8 @@ function write_script{S<:AbstractString}(io::IO, dcout::DCOut, dependencies::Vec
   print(io, "], function(")
   unused_counter = 1;
   for i in 1 : length(dependencies)
-    if (dependencies[i][3])
-      print(io, dependencies[i][1])
+    if (dependencies[i].has_export)
+      print(io, dependencies[i].name)
     else
       print(io, "unused", unused_counter)
       unused_counter += 1
@@ -223,10 +228,10 @@ function write_source_html(io::IO, dcout::DCOut)
 	write_html_head(io)
 	write_html_body(io, dcout.charts)
   # Note: dependencies must be ordered! (hence why this is not a dictionary)
-  dependencies = [("_","https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min", true),
-                  ("d3","https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min", true),
-                  ("crossfilter","https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter", false),
-                  ("dc","https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.1/dc", true)]
+  dependencies = [Dependency("_","https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min", true),
+                  Dependency("d3","https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min", true),
+                  Dependency("crossfilter","https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter", false),
+                  Dependency("dc","https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.1/dc", true)]
 	write_script(io, dcout, dependencies)
 end
 
@@ -240,16 +245,17 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		2 - generate iframe html + js page
 		3 - write link to it
 		=#
-		iframe_name = @sprintf("dc%s.htm", Dates.format(now(), "yyyymmdd_HHMMSS"))
-    #=
-		fout = open(iframe_name, "w")
-		write_source_html(fout, dcout)
-		close(fout)
-		write(io, """<iframe src="$iframe_name" width="975" height="550"></iframe>""")
-    =#
     write(io, """<div style="width:900px; height: 500px;">""")
     write_source_html(io, dcout)
     write(io, """</div>""")
+
+    #= Old iframe code
+    iframe_name = @sprintf("dc%s.htm", Dates.format(now(), "yyyymmdd_HHMMSS"))
+    fout = open(iframe_name, "w")
+    write_source_html(fout, dcout)
+    close(fout)
+    write(io, """<iframe src="$iframe_name" width="975" height="550"></iframe>""")
+    =#
 	else
 		# TODO
 		# decide what to do in the absence of IJulia
