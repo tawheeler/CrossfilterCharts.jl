@@ -159,18 +159,31 @@ function piechart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	size_default!(chart)
 	chart
 end
+# TODO: Use different xUnits on Float and Int
 function linechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart = deepcopy(LineChart)
 	size_default!(chart)
 	chart[:x] = scale_default(arr)
 	chart
 end
-function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
-	chart = deepcopy(BubbleChart)
-	chart[:x] = scale_default(arr)
-	chart[:radiusValueAccessor] = ""
+function rowchart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
+	chart = deepcopy(RowChart)
+	size_default!(chart)
 	chart
 end
+function rowchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
+	chart = deepcopy(RowChart)
+	size_default!(chart)
+	chart
+end
+#=
+function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
+	chart = deepcopy(BubbleChart)
+	size_default!(chart)
+	chart[:x] = scale_default(arr)
+	chart
+end
+=#
 
 type DCChart
 	group::Group

@@ -6,6 +6,8 @@ using DataFrames
 
 export
 	dc,
+	quick_add,
+	clear_charts,
 
 	DCOut,
 	DCChart,
