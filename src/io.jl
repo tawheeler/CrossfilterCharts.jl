@@ -180,14 +180,7 @@ function write_script(io::IO, dcout::DCOut, dependencies::Vector{Dependency})
     end
   end
   print(io, ") {\n")
-  #=
-  print(io, """require.config({paths: {"_": "https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min" ,
- "d3": "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min" ,
- "crossfilter": "https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter" ,
- "dc": "https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.1/dc" }});
 
-require(["_", "d3", "crossfilter", "dc"], function(_, d3, _unused, dc) {""")
-  =#
 	write_data(io, dcout.df)
 
 	# crossfilter
