@@ -48,9 +48,8 @@ function quick_add(dcout::DCOut, column::Symbol, chart_constructor::Function)
 	end
 end
 
-function quick_add(dcout::DCOut, widget_constructor::Function)
-	new_widget = widget_constructor()
-	push!(dcout.widgets, new_widget)
+function add_widget(dcout::DCOut, widget::DCWidget)
+	push!(dcout.widgets, widget)
 end
 
 function clear_charts(dcout::DCOut)

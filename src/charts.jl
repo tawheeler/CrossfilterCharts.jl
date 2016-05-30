@@ -158,7 +158,7 @@ end
 
 function Base.write(io::IO, chart::DCWidget, indent::Int)
 	tabbing = "  "^indent
-	println(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"\#", chart.parent, "\")") # TODO: add chart grouping
+	print(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"\#", chart.parent, "\")") # TODO: add chart grouping
 
 	attributes = get_all_attributes(chart.typ)
 	for (i,a) in enumerate(attributes)
@@ -245,15 +245,13 @@ function datacountwidget()
 	chart[:dimension] = "cf"
 	chart[:group] = "all"
   dcwidget = DCWidget(chart)
-  html_str = IOBuffer()
-  print(html_str, "<div id=\"", dcwidget.parent, """\"><span class="filter-count"></span> selected out of <span class="total-count"></span> records</div><br/>""")
-  dcwidget.html = takebuf_string(html_str)
+  dcwidget.html = string("<div id=\"", dcwidget.parent, """\"><span class="filter-count"></span> selected out of <span class="total-count"></span> records</div><br/>""")
   dcwidget
 end
-function datatablewidget(dim::Dimension, columns::Vector{Symbol})
+function datatablewidget(col::Symbol, columns::Vector{Symbol})
 	chart = deepcopy(DataTableWidget)
-	chart[:dimension] = dim.name
-	chart[:group] = ""
+	chart[:dimension] = string(col)
+	chart[:group] = "function(d) {return d;}"
 	col_str = IOBuffer()
 	print(col_str, "[")
 	for key in columns
@@ -261,7 +259,9 @@ function datatablewidget(dim::Dimension, columns::Vector{Symbol})
   end
   print(col_str, "]")
   chart[:columns] = takebuf_string(col_str)
-  DCWidget(chart, """<table class="table table-hover dc-data-table"></table>""")
+  dcwidget = DCWidget(chart)
+  dcwidget.html = string("<table class=\"table table-hover\" id=\"", dcwidget.parent, "\"></table>")
+  dcwidget
 end
 #=
 function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
