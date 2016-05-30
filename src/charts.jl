@@ -114,16 +114,15 @@ type DCChart
 	typ::ChartType
 	title::ASCIIString
 	parent::ASCIIString
-	innerHTML::ASCIIString
 
 	function DCChart(
 		typ::ChartType,
 		group::Group;
 		title::ASCIIString = "Chart for " * string(group.dim.name),
 		parent::ASCIIString = @sprintf("chart_%06d", rand(0:999999)),
-		innerHTML::ASCIIString = "")
+		)
 
-		new(group, typ, title, parent, innerHTML)
+		new(group, typ, title, parent)
 	end
 end
 
@@ -245,7 +244,24 @@ function datacountwidget()
 	chart = deepcopy(DataCountWidget)
 	chart[:dimension] = "cf"
 	chart[:group] = "all"
-  DCWidget(chart, """<span class="filter-count"></span> selected out of <span class="total-count"></span> records""")
+  dcwidget = DCWidget(chart)
+  html_str = IOBuffer()
+  print(html_str, "<div id=\"", dcwidget.parent, """\"><span class="filter-count"></span> selected out of <span class="total-count"></span> records</div><br/>""")
+  dcwidget.html = takebuf_string(html_str)
+  dcwidget
+end
+function datatablewidget(dim::Dimension, columns::Vector{Symbol})
+	chart = deepcopy(DataTableWidget)
+	chart[:dimension] = dim.name
+	chart[:group] = ""
+	col_str = IOBuffer()
+	print(col_str, "[")
+	for key in columns
+		print(col_str, "'", key, "',\n")
+  end
+  print(col_str, "]")
+  chart[:columns] = takebuf_string(col_str)
+  DCWidget(chart, """<table class="table table-hover dc-data-table"></table>""")
 end
 #=
 function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)

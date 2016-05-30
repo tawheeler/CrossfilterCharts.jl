@@ -25,12 +25,12 @@ function write_html_chart_entry(io::IO, chart::DCChart, indent::Int=0)
 	tabbing = "  "^indent
 	println(io, tabbing, "<div style=\"float:left;\">")
 	println(io, tabbing, "  <h3 id=\"heading_", chart.parent, "\">", chart.title, " </h3>")
-	println(io, tabbing, "  <div id=\"", chart.parent, "\">", chart.innerHTML, "</div>")
+	println(io, tabbing, "  <div id=\"", chart.parent, "\"></div>")
 	println(io, tabbing, "</div>")
 end
 function write_html_widget_entry(io::IO, widget::DCWidget, indent::Int=0)
   tabbing = "  "^indent
-  println(io, tabbing, "<div id=\"", widget.parent, "\">", widget.html, "</div>")
+  println(io, tabbing, widget.html, "<br/>")
 end
 function write_html_body(io::IO, dcout::DCOut)
 	print(io, """<body>
@@ -250,7 +250,7 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		2 - generate iframe html + js page
 		3 - write link to it
 		=#
-    write(io, """<div style="width:900px; height: 500px; overflow-y: auto;">""")
+    write(io, """<div style="width:900px; height: 530px; overflow-y: auto;">""")
     write_source_html(io, dcout)
     write(io, """</div>""")
 
