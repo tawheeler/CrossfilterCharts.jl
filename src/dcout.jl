@@ -3,12 +3,14 @@ type DCOut
 	dims::Vector{Dimension}
 	groups::Vector{Group}
 	charts::Vector{DCChart}
+	widgets::Vector{DCWidget}
 
 	function DCOut(df::DataFrame)
 
 		dims = Dimension[]
 		groups = Group[]
 		charts = DCChart[]
+		widgets = DCWidget[]
 
 		for name in names(df)
 
@@ -20,12 +22,12 @@ type DCOut
 				group = infer_group(arr, dim)
 				push!(groups, group)
 
-				chart = DCChart(infer_chart(arr, group), group)
+				chart = infer_chart(arr, group)
 				push!(charts, chart)
 			end
 		end
 
-		new(df, dims, groups, charts)
+		new(df, dims, groups, charts, widgets)
 	end
 end
 
@@ -40,10 +42,20 @@ function quick_add(dcout::DCOut, column::Symbol, chart_constructor::Function)
 			end
 		end
 		new_chart = chart_constructor(dcout.df[column], dcout.groups[i])
-		push!(dcout.charts, DCChart(new_chart, dcout.groups[i]))
+		push!(dcout.charts, new_chart)
 	else
 		throw(NotInferrableError())
 	end
+end
+
+function add_widget(dcout::DCOut, widget::DCWidget)
+	push!(dcout.widgets, widget)
+end
+
+function clear_charts(dcout::DCOut)
+	dcout.charts = DCChart[]
+	dcout.widgets = DCWidget[]
+	Union{}
 end
 
 """

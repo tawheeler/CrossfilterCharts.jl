@@ -1,16 +1,24 @@
+type Dependency
+  name::ASCIIString
+  path::ASCIIString
+  has_export::Bool
+end
+
 function write_html_head(io::IO)
 	print(io, """
-	<head>
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" rel="stylesheet">
-		<style>
-	    .fake-link {
-	      color: blue;
-	      text-decoration: underline;
-	      cursor: pointer;
-	      font-size: 12px;
-	    }
-	  </style>
-	</head>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" rel="stylesheet">
+	<style>
+    .fake-link {
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .button-label {
+      cursor: pointer;
+      margin-right: 20px;
+    }
+  	</style>
 	""")
 end
 function write_html_chart_entry(io::IO, chart::DCChart, indent::Int=0)
@@ -20,22 +28,37 @@ function write_html_chart_entry(io::IO, chart::DCChart, indent::Int=0)
 	println(io, tabbing, "  <div id=\"", chart.parent, "\"></div>")
 	println(io, tabbing, "</div>")
 end
-function write_html_body(io::IO, charts::Vector{DCChart})
-	println(io, "<body>")
-	for chart in charts
+function write_html_widget_entry(io::IO, widget::DCWidget, indent::Int=0)
+  tabbing = "  "^indent
+  println(io, tabbing, widget.html, "<br/>")
+end
+function write_html_body(io::IO, dcout::DCOut)
+	print(io, """<body>
+  <div id="reset_all_well" style="width: 100%; text-align: right;">&nbsp</div>
+  """)
+	for chart in dcout.charts
 		write_html_chart_entry(io, chart, 1)
 	end
 	print(io, """
-	<div style="float:left;">
-    <div id="reset_all_well">&nbsp</div>
-  </div>
+	<div style="clear:both;"></div>
   """)
+  for widget in dcout.widgets
+    write_html_widget_entry(io, widget, 0)
+  end
 	println(io, "</body>")
 end
-function write_script_dependencies{S<:AbstractString}(io::IO, dependencies::Vector{S})
-	for src in dependencies
+function write_script_dependencies(io::IO, dependencies::Vector{Dependency})
+  print(io, """require.config({paths: {""")
+	for i in 1 : length(dependencies)
+    #=
 		@printf(io, "<script src='%s'></script>\n", src)
+    =#
+    @printf(io, """ "%s": "%s" """, dependencies[i].name, dependencies[i].path)
+    if i < length(dependencies)
+      print(io, ",\n")
+    end
 	end
+  print(io, """}});\n""")
 end
 function write_json_entry(io, names::Vector{Symbol}, values::Vector{Any})
 	print(io, "{")
@@ -99,11 +122,9 @@ var update_reset_buttons = function(chart) {
   d3.select("#heading_" + chart_names[idx]).select(".chart-reset").remove();
   if (filter_in_use) {
     d3.select("#reset_all_well")
-      .append("button")
-      .attr("type", "button")
+      .append("a")
+      .attr("class", "button-label")
       .attr("id", "reset_all_btn")
-      .append("div")
-      .attr("class", "label")
       .text(function(d) {
         return "Reset All";
       })
@@ -140,12 +161,37 @@ function quote_corrector() # doesn't actually do anything, just corrects quotes 
 	a"c
 	"""
 end
-function write_script(io::IO, dcout::DCOut)
+function write_script(io::IO, dcout::DCOut, dependencies::Vector{Dependency})
 	println(io, """<script type="text/javascript">""")
+  write_script_dependencies(io, dependencies)
+
+  print(io, "require([")
+  for i in 1 : length(dependencies)
+    print(io, "\"", dependencies[i].name, "\"")
+    if i < length(dependencies)
+      print(io, ", ")
+    end
+  end
+  print(io, "], function(")
+  unused_counter = 1;
+  for i in 1 : length(dependencies)
+    if (dependencies[i].has_export)
+      print(io, dependencies[i].name)
+    else
+      print(io, "unused", unused_counter)
+      unused_counter += 1
+    end
+    if i < length(dependencies)
+      print(io, ", ")
+    end
+  end
+  print(io, ") {\n")
+
 	write_data(io, dcout.df)
 
 	# crossfilter
 	println(io, "var cf = crossfilter(data);")
+  println(io, "var all = cf.groupAll();")
 
 	# dimensions
 	for dim in dcout.dims
@@ -171,20 +217,27 @@ function write_script(io::IO, dcout::DCOut)
 		write(io, chart, 1)
 	end
 
+  # widget
+  for widget in dcout.widgets
+    write(io, widget, 1)
+  end
+
 	println(io, "dc.renderAll();")
 
 	write_reset_script(io, dcout)
 
-	println(io, "</script>")
+	println(io, "});
+</script>")
 end
 function write_source_html(io::IO, dcout::DCOut)
 	write_html_head(io)
-	write_html_body(io, dcout.charts)
-	write_script_dependencies(io, ["https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js",
-								   "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js",
-								   "https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter.js",
-								   "https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.1/dc.js"])
-	write_script(io, dcout)
+	write_html_body(io, dcout)
+  # Note: dependencies must be ordered! (hence why this is not a dictionary)
+  dependencies = [Dependency("_","https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min", true),
+                  Dependency("d3","https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min", true),
+                  Dependency("crossfilter","https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter", false),
+                  Dependency("dc","https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.1/dc", true)]
+	write_script(io, dcout, dependencies)
 end
 
 function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
@@ -205,11 +258,9 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		nrows = ceil(Int, ncharts/3)
 		iframe_height = nrows*275
 
-		iframe_name = @sprintf("dc%06d.htm", rand(0:999999))
-		fout = open(iframe_name, "w")
-		write_source_html(fout, dcout)
-		close(fout)
-		write(io, """<iframe src="$iframe_name" width="$iframe_width" height="$iframe_height"></iframe>""")
+	    write(io, """<div style="width:$(iframe_width)px; height: $(iframe_height)px; overflow-y: auto;">""")
+	    write_source_html(io, dcout)
+	    write(io, """</div>""")
 	else
 		# TODO
 		# decide what to do in the absence of IJulia
