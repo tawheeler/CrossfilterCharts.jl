@@ -205,13 +205,6 @@ function write_script(io::IO, dcout::DCOut, dependencies::Vector{Dependency})
 		print(io, "\n")
 	end
 
-	# # unique name extraction (TODO: get rid of underscore.js)
-	# for (dim, name) in enumerate(names(dcout.df))
-	# 	if eltype(df[dim]) <: AbstractString
-	# 		println(io, "window.", name, "_names = _.chain(data).pluck(\"", name, "\").uniq().value();")
-	# 	end
-	# end
-
 	# charts
 	for chart in dcout.charts
 		write(io, chart, 1)
