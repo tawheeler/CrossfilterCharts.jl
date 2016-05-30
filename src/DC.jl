@@ -19,9 +19,11 @@ export
 	BarChart,
 	LineChart,
 
+	rowchart,
 	barchart,
 	piechart,
 	linechart,
+	datacountwidget,
 
 	reduce_count,
 	reduce_sum,

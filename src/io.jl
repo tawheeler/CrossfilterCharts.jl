@@ -163,35 +163,35 @@ function quote_corrector() # doesn't actually do anything, just corrects quotes 
 end
 function write_script(io::IO, dcout::DCOut, dependencies::Vector{Dependency})
 	println(io, """<script type="text/javascript">""")
-  write_script_dependencies(io, dependencies)
+  	write_script_dependencies(io, dependencies)
 
-  print(io, "require([")
-  for i in 1 : length(dependencies)
-    print(io, "\"", dependencies[i].name, "\"")
-    if i < length(dependencies)
-      print(io, ", ")
-    end
-  end
-  print(io, "], function(")
-  unused_counter = 1;
-  for i in 1 : length(dependencies)
-    if (dependencies[i].has_export)
-      print(io, dependencies[i].name)
-    else
-      print(io, "unused", unused_counter)
-      unused_counter += 1
-    end
-    if i < length(dependencies)
-      print(io, ", ")
-    end
-  end
-  print(io, ") {\n")
+	print(io, "require([")
+	for i in 1 : length(dependencies)
+		print(io, "\"", dependencies[i].name, "\"")
+		if i < length(dependencies)
+	 		print(io, ", ")
+		end
+	end
+	print(io, "], function(")
+	unused_counter = 1;
+	for i in 1 : length(dependencies)
+		if (dependencies[i].has_export)
+	 		print(io, dependencies[i].name)
+		else
+	  		print(io, "unused", unused_counter)
+	  		unused_counter += 1
+		end
+		if i < length(dependencies)
+	 		print(io, ", ")
+		end
+	end
+	print(io, ") {\n")
 
 	write_data(io, dcout.df)
 
 	# crossfilter
 	println(io, "var cf = crossfilter(data);")
-  println(io, "var all = cf.groupAll();")
+ 	println(io, "var all = cf.groupAll();")
 
 	# dimensions
 	for dim in dcout.dims
@@ -210,31 +210,28 @@ function write_script(io::IO, dcout::DCOut, dependencies::Vector{Dependency})
 		write(io, chart, 1)
 	end
 
-  # widget
-  for widget in dcout.widgets
-    write(io, widget, 1)
-  end
+	# widget
+	for widget in dcout.widgets
+		write(io, widget, 1)
+	end
 
 	println(io, "dc.renderAll();")
 
 	write_reset_script(io, dcout)
 
-	println(io, "});
-</script>")
+	println(io, "});\n</script>")
 end
 function write_source_html(io::IO, dcout::DCOut)
 	write_html_head(io)
 	write_html_body(io, dcout)
-  # Note: dependencies must be ordered! (hence why this is not a dictionary)
-  dependencies = [Dependency("_","https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min", true),
-                  Dependency("d3","https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min", true),
-                  Dependency("crossfilter","https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter", false),
-                  Dependency("dc","https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.1/dc", true)]
+ 	# Note: dependencies must be ordered! (hence why this is not a dictionary)
+	dependencies = [Dependency("d3","https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min", true),
+	                Dependency("crossfilter","https://cdnjs.cloudflare.com/ajax/libs/crossfilter/1.3.7/crossfilter", false),
+	                Dependency("dc","https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.1/dc", true)]
 	write_script(io, dcout, dependencies)
 end
 
 function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
-
 
 	# If IJulia is present, go for it
 	if isdefined(Main, :IJulia)

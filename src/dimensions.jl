@@ -1,6 +1,9 @@
 type Dimension
 	name::Symbol # column name in dataframe
 	accessor::ASCIIString # this lets us do: var paymentsByTotal = payments.dimension(function(d) { return d.total; });
+	bin_width::Float64 # discretization width, NaN if unused
+
+	Dimension(name::Symbol, accessor::ASCIIString, bin_width::Float64=NaN) = new(name, accessor, bin_width)
 end
 
 """
@@ -32,7 +35,7 @@ function infer_dimension{F<:AbstractFloat}(arr::AbstractDataArray{F}, name::Symb
     bin_width = round_to_nearest_half_order_of_magnitude((hi-lo)/desired_bincount)
 
 	accessor = @sprintf("function(d){return Math.round(d.%s / %f)*%f; }", name, bin_width, bin_width)
-	Dimension(name, accessor)
+	Dimension(name, accessor, bin_width)
 end
 function infer_dimension{S<:AbstractString}(arr::AbstractDataArray{S}, name::Symbol)
 	accessor = @sprintf("function(d){return d.%s; }", name)

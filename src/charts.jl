@@ -194,8 +194,8 @@ function scale_default{R<:Real}(arr::AbstractDataArray{R})
 					     ceil(Int, maximum(arr)))
 end
 function size_default!(chart::ChartType)
-	chart[:width] = "250.0"
-	chart[:height] = "200.0"
+	chart[:width] = "300.0"
+	chart[:height] = "225.0"
 end
 
 function barchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
@@ -210,12 +210,14 @@ function barchart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
 	size_default!(chart)
 	chart[:centerBar] = "true"
 	chart[:x] = scale_default(arr)
-	chart[:xUnits] = "dc.units.fp.precision(.1)"
+	chart[:xUnits] = "dc.units.fp.precision($(group.dim.bin_width))"
 	DCChart(chart, group)
 end
 function piechart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
 	chart = deepcopy(PieChart)
 	size_default!(chart)
+	chart[:radius] = string(parse(Float64, chart[:height].value)*0.4)
+	chart[:slicesCap] = "10"
 	DCChart(chart, group)
 end
 function piechart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
