@@ -3,12 +3,14 @@ type DCOut
 	dims::Vector{Dimension}
 	groups::Vector{Group}
 	charts::Vector{DCChart}
+	widgets::Vector{DCWidget}
 
 	function DCOut(df::DataFrame)
 
 		dims = Dimension[]
 		groups = Group[]
 		charts = DCChart[]
+		widgets = DCWidget[]
 
 		for name in names(df)
 
@@ -25,7 +27,7 @@ type DCOut
 			end
 		end
 
-		new(df, dims, groups, charts)
+		new(df, dims, groups, charts, widgets)
 	end
 end
 
@@ -46,8 +48,14 @@ function quick_add(dcout::DCOut, column::Symbol, chart_constructor::Function)
 	end
 end
 
+function quick_add(dcout::DCOut, widget_constructor::Function)
+	new_widget = widget_constructor()
+	push!(dcout.widgets, new_widget)
+end
+
 function clear_charts(dcout::DCOut)
 	dcout.charts = DCChart[]
+	dcout.widgets = DCWidget[]
 	Union{}
 end
 

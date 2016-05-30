@@ -79,31 +79,96 @@ const CoordinateGridChart = ChartType([Attribute(:zoomScale),
 const AbstractBubbleChart = ChartType([Attribute(:r), Attribute(:radiusValueAccessor),
 										 									 Attribute(:minRadiusWithLabel), Attribute(:maxBubbleRelativeSize)],
 										 									[ColorChart])
+const WidgetChart = ChartType([Attribute(:group), Attribute(:dimension)])
 
 # StackableChart = ChartType(false, [Attribute{}])
 
 const PieChart = ChartType("pieChart",
-	                 [Attribute(:slicesCap), Attribute(:innerRadius),
-	                  Attribute(:radius), Attribute(:cx),
-	                  Attribute(:cy), Attribute(:minAngleForLabel)],
-	                 [ColorChart, BaseChart])
+	                  [Attribute(:slicesCap), Attribute(:innerRadius),
+	                   Attribute(:radius), Attribute(:cx),
+	                   Attribute(:cy), Attribute(:minAngleForLabel)],
+	                  [ColorChart, BaseChart])
 const BarChart = ChartType("barChart",
-					 [Attribute(:centerBar), Attribute(:gap)],
-	                 [CoordinateGridChart]) # StackableChart
+					 					[Attribute(:centerBar), Attribute(:gap)],
+	                  [CoordinateGridChart]) # StackableChart
 const LineChart = ChartType("lineChart",
 	                  [Attribute(:renderArea), Attribute(:dotRadius)],
 					  [CoordinateGridChart]) # StackableChart
 const RowChart = ChartType("rowChart",
 										[Attribute(:gap), Attribute(:elasticX),
 										 Attribute(:labelOffsetX), Attribute(:labelOffsetY)],
-										 [ColorChart, BaseChart])
+										[ColorChart, BaseChart])
 const BubbleChart = ChartType("bubbleChart",
 										[Attribute(:elasticRadius)],
-										 [AbstractBubbleChart, CoordinateGridChart])
+										[AbstractBubbleChart, CoordinateGridChart])
+const DataCountWidget = ChartType("dataCount",
+										Attribute[],
+										[WidgetChart])
 const DataTableWidget = ChartType("dataTable",
-									 [Attribute(:size), Attribute(:columns),
-									  Attribute(:sortBy), Attribute(:order)],
-									 [BaseChart])
+										[Attribute(:size), Attribute(:columns),
+										 Attribute(:sortBy), Attribute(:order)],
+										[WidgetChart])
+
+type DCChart
+	group::Group
+	typ::ChartType
+	title::ASCIIString
+	parent::ASCIIString
+	innerHTML::ASCIIString
+
+	function DCChart(
+		typ::ChartType,
+		group::Group;
+		title::ASCIIString = "Chart for " * string(group.dim.name),
+		parent::ASCIIString = @sprintf("chart_%06d", rand(0:999999)),
+		innerHTML::ASCIIString = "")
+
+		new(group, typ, title, parent, innerHTML)
+	end
+end
+
+function Base.write(io::IO, chart::DCChart, indent::Int)
+	tabbing = "  "^indent
+	println(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"\#", chart.parent, "\")") # TODO: add chart grouping
+	println(io, tabbing, "  .dimension(", chart.group.dim.name, ")")
+	print(io, tabbing, "  .group(", chart.group.name, ")")
+
+	attributes = get_all_attributes(chart.typ)
+	for (i,a) in enumerate(attributes)
+		if !isempty(a.value)
+			print(io, "\n", tabbing, "  .", string(a.name), "(", a.value, ")")
+		end
+	end
+	println(io, ";")
+end
+
+type DCWidget
+	typ::ChartType
+	parent::ASCIIString
+	html::ASCIIString
+
+	function DCWidget(
+		typ::ChartType,
+		html::ASCIIString = "",
+		parent::ASCIIString = @sprintf("chart_%06d", rand(0:999999)),
+		)
+
+		new(typ, parent, html)
+	end
+end
+
+function Base.write(io::IO, chart::DCWidget, indent::Int)
+	tabbing = "  "^indent
+	println(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"\#", chart.parent, "\")") # TODO: add chart grouping
+
+	attributes = get_all_attributes(chart.typ)
+	for (i,a) in enumerate(attributes)
+		if !isempty(a.value)
+			print(io, "\n", tabbing, "  .", string(a.name), "(", a.value, ")")
+		end
+	end
+	println(io, ";")
+end
 
 """
 	can_infer_chart(arr::AbstractDataArray)
@@ -176,6 +241,12 @@ function rowchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	size_default!(chart)
 	DCChart(chart, group)
 end
+function datacountwidget()
+	chart = deepcopy(DataCountWidget)
+	chart[:dimension] = "cf"
+	chart[:group] = "all"
+  DCWidget(chart, """<span class="filter-count"></span> selected out of <span class="total-count"></span> records""")
+end
 #=
 function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart = deepcopy(BubbleChart)
@@ -184,40 +255,6 @@ function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart
 end
 =#
-
-type DCChart
-	group::Group
-	typ::ChartType
-	title::ASCIIString
-	parent::ASCIIString
-
-	function DCChart(
-		typ::ChartType,
-		group::Group;
-		title::ASCIIString = "Chart for " * string(group.dim.name),
-		parent::ASCIIString = @sprintf("chart_%06d", rand(0:999999)),
-		)
-
-		new(group, typ, title, parent)
-	end
-end
-
-function Base.write(io::IO, chart::DCChart, indent::Int)
-	tabbing = "  "^indent
-	println(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"\#", chart.parent, "\")") # TODO: add chart grouping
-	println(io, tabbing, "  .dimension(", chart.group.dim.name, ")")
-	print(io, tabbing, "  .group(", chart.group.name, ")")
-
-	attributes = get_all_attributes(chart.typ)
-	for (i,a) in enumerate(attributes)
-		if !isempty(a.value)
-			print(io, "\n", tabbing, "  .", string(a.name), "(", a.value, ")")
-		end
-	end
-	println(io, ";")
-end
-
-
 
 #=
 DataCountWidget <: BaseChart

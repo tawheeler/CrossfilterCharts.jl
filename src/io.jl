@@ -6,37 +6,45 @@ end
 
 function write_html_head(io::IO)
 	print(io, """
-		<link href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" rel="stylesheet">
-		<style>
-	    .fake-link {
-	      color: blue;
-	      text-decoration: underline;
-	      cursor: pointer;
-	      font-size: 12px;
-	    }
-      button-label {
-
-      }
-	  </style>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" rel="stylesheet">
+	<style>
+    .fake-link {
+      color: blue;
+      text-decoration: underline;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    .button-label {
+      cursor: pointer;
+      margin-right: 20px;
+    }
+  </style> 
 	""")
 end
 function write_html_chart_entry(io::IO, chart::DCChart, indent::Int=0)
 	tabbing = "  "^indent
 	println(io, tabbing, "<div style=\"float:left;\">")
 	println(io, tabbing, "  <h3 id=\"heading_", chart.parent, "\">", chart.title, " </h3>")
-	println(io, tabbing, "  <div id=\"", chart.parent, "\"></div>")
+	println(io, tabbing, "  <div id=\"", chart.parent, "\">", chart.innerHTML, "</div>")
 	println(io, tabbing, "</div>")
 end
-function write_html_body(io::IO, charts::Vector{DCChart})
-	println(io, "<body>")
-	for chart in charts
+function write_html_widget_entry(io::IO, widget::DCWidget, indent::Int=0)
+  tabbing = "  "^indent
+  println(io, tabbing, "<div id=\"", widget.parent, "\">", widget.html, "</div>")
+end
+function write_html_body(io::IO, dcout::DCOut)
+	print(io, """<body>
+  <div id="reset_all_well" style="width: 100%; text-align: right;">&nbsp</div>
+  """)
+	for chart in dcout.charts
 		write_html_chart_entry(io, chart, 1)
 	end
 	print(io, """
-	<div style="float:left;">
-    <div id="reset_all_well">&nbsp</div>
-  </div>
+	<div style="clear:both;"></div>
   """)
+  for widget in dcout.widgets
+    write_html_widget_entry(io, widget, 0)
+  end
 	println(io, "</body>")
 end
 function write_script_dependencies(io::IO, dependencies::Vector{Dependency})
@@ -114,11 +122,9 @@ var update_reset_buttons = function(chart) {
   d3.select("#heading_" + chart_names[idx]).select(".chart-reset").remove();
   if (filter_in_use) {
     d3.select("#reset_all_well")
-      .append("button")
-      .attr("type", "button")
-      .attr("id", "reset_all_btn")
-      .append("div")
+      .append("a")
       .attr("class", "button-label")
+      .attr("id", "reset_all_btn")
       .text(function(d) {
         return "Reset All";
       })
@@ -157,8 +163,8 @@ function quote_corrector() # doesn't actually do anything, just corrects quotes 
 end
 function write_script(io::IO, dcout::DCOut, dependencies::Vector{Dependency})
 	println(io, """<script type="text/javascript">""")
-  
   write_script_dependencies(io, dependencies)
+
   print(io, "require([")
   for i in 1 : length(dependencies)
     print(io, "\"", dependencies[i].name, "\"")
@@ -185,6 +191,7 @@ function write_script(io::IO, dcout::DCOut, dependencies::Vector{Dependency})
 
 	# crossfilter
 	println(io, "var cf = crossfilter(data);")
+  println(io, "var all = cf.groupAll();")
 
 	# dimensions
 	for dim in dcout.dims
@@ -210,6 +217,11 @@ function write_script(io::IO, dcout::DCOut, dependencies::Vector{Dependency})
 		write(io, chart, 1)
 	end
 
+  # widget
+  for widget in dcout.widgets
+    write(io, widget, 1)
+  end
+
 	println(io, "dc.renderAll();")
 
 	write_reset_script(io, dcout)
@@ -219,7 +231,7 @@ function write_script(io::IO, dcout::DCOut, dependencies::Vector{Dependency})
 end
 function write_source_html(io::IO, dcout::DCOut)
 	write_html_head(io)
-	write_html_body(io, dcout.charts)
+	write_html_body(io, dcout)
   # Note: dependencies must be ordered! (hence why this is not a dictionary)
   dependencies = [Dependency("_","https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min", true),
                   Dependency("d3","https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min", true),
@@ -238,7 +250,7 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		2 - generate iframe html + js page
 		3 - write link to it
 		=#
-    write(io, """<div style="width:900px; height: 500px;">""")
+    write(io, """<div style="width:900px; height: 500px; overflow-y: auto;">""")
     write_source_html(io, dcout)
     write(io, """</div>""")
 
