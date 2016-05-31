@@ -167,7 +167,9 @@ end
 
 function randomize_parent(widget::DCWidget)
 	widget.parent = @sprintf("chart_%06d", rand(0:999999))
-	widget.html = string("<div id=\"", widget.parent, """\"><span class="filter-count"></span> selected out of <span class="total-count"></span> records</div><br/>""")
+	if widget.typ.concreteName == "dataCount"
+		widget.html = string("<div id=\"", widget.parent, """\"><span class="filter-count"></span> selected out of <span class="total-count"></span> records</div><br/>""")
+	end
 	Union{}
 end
 
