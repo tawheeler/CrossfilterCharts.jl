@@ -160,6 +160,11 @@ type DCWidget
 	end
 end
 
+function randomize_parent(chart_or_widget::Union{DCChart, DCWidget})
+	chart_or_widget.parent = @sprintf("chart_%06d", rand(0:999999))
+	Union{}
+end
+
 function Base.write(io::IO, chart::DCWidget, indent::Int)
 	tabbing = "  "^indent
 	print(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"\#", chart.parent, "\")") # TODO: add chart grouping
@@ -288,6 +293,7 @@ function datatablewidget(col::Symbol, columns::Vector{Symbol})
   dcwidget
 end
 
+#=
 # Bubble Chart 
 function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart = deepcopy(BubbleChart)
@@ -298,6 +304,7 @@ end
 =#
 
 
+#=
 # Chart types
 DataCountWidget <: BaseChart
 DataTableWidget <: BaseChart

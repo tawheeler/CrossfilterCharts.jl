@@ -36,9 +36,9 @@ function write_html_widget_entry(io::IO, widget::DCWidget, indent::Int=0)
 end
 
 function write_html_body(io::IO, dcout::DCOut)
-	print(io, """<body>
-  <div id="reset_all_well" style="width: 100%; text-align: right;">&nbsp</div>
-  """)
+	print(io, "<body>
+  <div id=\"reset_all_well_", dcout.output_id, "\"style=\"width: 100%; text-align: right;\">&nbsp</div>
+  ")
 	for chart in dcout.charts
 		write_html_chart_entry(io, chart, 1)
 	end
@@ -115,7 +115,7 @@ function write_reset_script(io::IO, dcout::DCOut)
 		end
 	end
 	println(io, "];")
-	print(io, """)
+	print(io, """
 
 var update_reset_buttons = function(chart) {
   var filter_in_use = false;
@@ -126,14 +126,15 @@ var update_reset_buttons = function(chart) {
     }
   }
   var idx = charts.indexOf(chart);
-  d3.select("#reset_all_btn").remove();
+  d3.select("#reset_all_btn_""", dcout.output_id,
+  """").remove();
   d3.select("#heading_" + chart_names[idx]).select(".chart-reset").remove();
   
   if (filter_in_use) {
-    d3.select("#reset_all_well")
+    d3.select("#reset_all_well_""", dcout.output_id, """")
       .append("a")
       .attr("class", "button-label")
-      .attr("id", "reset_all_btn")
+      .attr("id", "reset_all_btn_""", dcout.output_id, """")
       .text(function(d) {
         return "Reset All";
       })
@@ -260,9 +261,11 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		nrows = ceil(Int, ncharts/3)
 		iframe_height = nrows*275
 
-	    write(io, """<div style="width:$(iframe_width)px; height: $(iframe_height)px; overflow-y: auto;">""")
-	    write_source_html(io, dcout)
-	    write(io, """</div>""")
+    randomize_ids(dcout)
+
+    write(io, """<div style="width:$(iframe_width)px; height: $(iframe_height)px; overflow-y: auto;">""")
+    write_source_html(io, dcout)
+    write(io, """</div>""")
 	else
 		# TODO
 		# decide what to do in the absence of IJulia

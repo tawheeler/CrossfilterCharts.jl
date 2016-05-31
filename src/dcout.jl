@@ -4,6 +4,7 @@ type DCOut
 	groups::Vector{Group}
 	charts::Vector{DCChart}
 	widgets::Vector{DCWidget}
+	output_id::Integer
 
 	function DCOut(df::DataFrame)
 
@@ -27,7 +28,7 @@ type DCOut
 			end
 		end
 
-		new(df, dims, groups, charts, widgets)
+		new(df, dims, groups, charts, widgets, rand(0:999999))
 	end
 end
 
@@ -56,6 +57,17 @@ function clear_charts(dcout::DCOut)
 	dcout.charts = DCChart[]
 	dcout.widgets = DCWidget[]
 	Union{}
+end
+
+function randomize_ids(dcout::DCOut)
+	dcout.output_id = rand(0:999999)
+
+  for chart in dcout.charts
+    randomize_parent(chart)
+  end
+  for widget in dcout.widgets
+    randomize_parent(widget)
+  end
 end
 
 """
