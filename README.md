@@ -11,7 +11,7 @@ A Julia package for automagical DC.js linked charts in your IJulia notebook
 
 ## Git It
 
-Quickly take a data set and make an exploratory data visualization with just a few lines of code. Just open a Julia terminal and run:
+Quickly take a data set and make exploratory data visualizations with just a few lines of code. Just open a Julia terminal and run:
 ```julia
 Pkg.clone("https://github.com/tawheeler/DC.jl.git")
 ```
