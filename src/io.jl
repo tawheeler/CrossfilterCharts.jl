@@ -21,6 +21,7 @@ function write_html_head(io::IO)
   	</style>
 	""")
 end
+
 function write_html_chart_entry(io::IO, chart::DCChart, indent::Int=0)
 	tabbing = "  "^indent
 	println(io, tabbing, "<div style=\"float:left;\">")
@@ -28,10 +29,12 @@ function write_html_chart_entry(io::IO, chart::DCChart, indent::Int=0)
 	println(io, tabbing, "  <div id=\"", chart.parent, "\"></div>")
 	println(io, tabbing, "</div>")
 end
+
 function write_html_widget_entry(io::IO, widget::DCWidget, indent::Int=0)
   tabbing = "  "^indent
   println(io, tabbing, widget.html, "<br/>")
 end
+
 function write_html_body(io::IO, dcout::DCOut)
 	print(io, """<body>
   <div id="reset_all_well" style="width: 100%; text-align: right;">&nbsp</div>
@@ -47,6 +50,7 @@ function write_html_body(io::IO, dcout::DCOut)
   end
 	println(io, "</body>")
 end
+
 function write_script_dependencies(io::IO, dependencies::Vector{Dependency})
   print(io, """require.config({paths: {""")
 	for i in 1 : length(dependencies)
@@ -60,6 +64,7 @@ function write_script_dependencies(io::IO, dependencies::Vector{Dependency})
 	end
   print(io, """}});\n""")
 end
+
 function write_json_entry(io, names::Vector{Symbol}, values::Vector{Any})
 	print(io, "{")
 	for i in 1 : length(names)
@@ -76,6 +81,7 @@ function write_json_entry(io, names::Vector{Symbol}, values::Vector{Any})
 	end
 	print(io, "}")
 end
+
 function write_data(io::IO, df::DataFrame)
 	colnames = names(df)
 	values = Array(Any, ncol(df))
@@ -91,6 +97,7 @@ function write_data(io::IO, df::DataFrame)
 	end
 	println(io, "];")
 end
+
 function write_reset_script(io::IO, dcout::DCOut)
 	print(io, "var charts = [")
 	for i in 1 : length(dcout.charts)
@@ -108,7 +115,8 @@ function write_reset_script(io::IO, dcout::DCOut)
 		end
 	end
 	println(io, "];")
-	print(io, """
+	print(io, """)
+
 var update_reset_buttons = function(chart) {
   var filter_in_use = false;
   for (var i = 0; i < charts.length; i++) {
@@ -120,6 +128,7 @@ var update_reset_buttons = function(chart) {
   var idx = charts.indexOf(chart);
   d3.select("#reset_all_btn").remove();
   d3.select("#heading_" + chart_names[idx]).select(".chart-reset").remove();
+  
   if (filter_in_use) {
     d3.select("#reset_all_well")
       .append("a")
@@ -134,6 +143,7 @@ var update_reset_buttons = function(chart) {
         }
         dc.redrawAll();
       });
+    
     if (chart.filters().length > 0) {
       d3.select("#heading_" + chart_names[idx])
         .append("span")
@@ -156,6 +166,7 @@ for (var i = 0; i < charts.length; i++) {
 }
 	""")
 end
+
 function quote_corrector() # doesn't actually do anything, just corrects quotes on sublime
 	x = """
 	a"c
@@ -221,6 +232,7 @@ function write_script(io::IO, dcout::DCOut, dependencies::Vector{Dependency})
 
 	println(io, "});\n</script>")
 end
+
 function write_source_html(io::IO, dcout::DCOut)
 	write_html_head(io)
 	write_html_body(io, dcout)
