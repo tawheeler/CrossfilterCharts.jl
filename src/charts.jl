@@ -128,6 +128,11 @@ type DCChart
 	end
 end
 
+function randomize_parent(chart::DCChart)
+	chart.parent = @sprintf("chart_%06d", rand(0:999999))
+	Union{}
+end
+
 function Base.write(io::IO, chart::DCChart, indent::Int)
 	tabbing = "  "^indent
 	println(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"\#", chart.parent, "\")") # TODO: add chart grouping
@@ -160,8 +165,9 @@ type DCWidget
 	end
 end
 
-function randomize_parent(chart_or_widget::Union{DCChart, DCWidget})
-	chart_or_widget.parent = @sprintf("chart_%06d", rand(0:999999))
+function randomize_parent(widget::DCWidget)
+	widget.parent = @sprintf("chart_%06d", rand(0:999999))
+	widget.html = string("<div id=\"", widget.parent, """\"><span class="filter-count"></span> selected out of <span class="total-count"></span> records</div><br/>""")
 	Union{}
 end
 
@@ -206,8 +212,6 @@ function size_default!(chart::ChartType)
 	chart[:width] = "300.0"
 	chart[:height] = "225.0"
 end
-
-
 
 # bar chart
 function barchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
@@ -271,10 +275,9 @@ function datacountwidget()
 	chart[:dimension] = "cf"
 	chart[:group] = "all"
   dcwidget = DCWidget(chart)
-  dcwidget.html = string("<div id=\"", dcwidget.parent, """\"><span class="filter-count"></span> selected out of <span class="total-count"></span> records</div><br/>""")
+  randomize_parent(dcwidget)
   dcwidget
 end
-
 
 # data table widget
 function datatablewidget(col::Symbol, columns::Vector{Symbol})
