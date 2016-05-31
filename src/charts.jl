@@ -109,6 +109,8 @@ const DataTableWidget = ChartType("dataTable",
 										 Attribute(:sortBy), Attribute(:order)],
 										[WidgetChart])
 
+
+# DC Chart
 type DCChart
 	group::Group
 	typ::ChartType
@@ -141,6 +143,8 @@ function Base.write(io::IO, chart::DCChart, indent::Int)
 	println(io, ";")
 end
 
+
+# DC Widget
 type DCWidget
 	typ::ChartType
 	parent::ASCIIString
@@ -198,6 +202,9 @@ function size_default!(chart::ChartType)
 	chart[:height] = "225.0"
 end
 
+
+
+# bar chart
 function barchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	chart = deepcopy(BarChart)
 	size_default!(chart)
@@ -213,6 +220,9 @@ function barchart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
 	chart[:xUnits] = "dc.units.fp.precision($(group.dim.bin_width))"
 	DCChart(chart, group)
 end
+
+
+# pie chart
 function piechart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
 	chart = deepcopy(PieChart)
 	size_default!(chart)
@@ -225,6 +235,9 @@ function piechart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	size_default!(chart)
 	DCChart(chart, group)
 end
+
+
+# line chart
 # TODO: Use different xUnits on Float and Int
 function linechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart = deepcopy(LineChart)
@@ -232,6 +245,9 @@ function linechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart[:x] = scale_default(arr)
 	DCChart(chart, group)
 end
+
+
+# row chart 
 function rowchart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
 	chart = deepcopy(RowChart)
 	size_default!(chart)
@@ -242,6 +258,9 @@ function rowchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	size_default!(chart)
 	DCChart(chart, group)
 end
+
+
+# data count widget
 function datacountwidget()
 	chart = deepcopy(DataCountWidget)
 	chart[:dimension] = "cf"
@@ -250,6 +269,9 @@ function datacountwidget()
   dcwidget.html = string("<div id=\"", dcwidget.parent, """\"><span class="filter-count"></span> selected out of <span class="total-count"></span> records</div><br/>""")
   dcwidget
 end
+
+
+# data table widget
 function datatablewidget(col::Symbol, columns::Vector{Symbol})
 	chart = deepcopy(DataTableWidget)
 	chart[:dimension] = string(col)
@@ -265,7 +287,8 @@ function datatablewidget(col::Symbol, columns::Vector{Symbol})
   dcwidget.html = string("<table class=\"table table-hover\" id=\"", dcwidget.parent, "\"></table>")
   dcwidget
 end
-#=
+
+# Bubble Chart 
 function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart = deepcopy(BubbleChart)
 	size_default!(chart)
@@ -274,7 +297,8 @@ function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 end
 =#
 
-#=
+
+# Chart types
 DataCountWidget <: BaseChart
 DataTableWidget <: BaseChart
 BubbleChart <: AbstractBubbleChart, CoordinateGridChart
