@@ -74,7 +74,8 @@ const CoordinateGridChart = ChartType([Attribute(:zoomScale),
 	                             Attribute(:xAxisPadding), Attribute(:y),
 	                             Attribute(:yAxis), Attribute(:elasticY),
 	                             Attribute(:renderHorizontalGridLines), Attribute(:renderVerticalGridLines),
-	                             Attribute(:yAxisPadding), Attribute(:round)],
+	                             Attribute(:yAxisPadding), Attribute(:round),
+	                             Attribute(:keyAccessor), Attribute(:valueAccessor)],
 								[BaseChart, ColorChart])
 const AbstractBubbleChart = ChartType([Attribute(:r), Attribute(:radiusValueAccessor),
 										 									 Attribute(:minRadiusWithLabel), Attribute(:maxBubbleRelativeSize)],
@@ -279,7 +280,39 @@ function linechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	DCChart(chart, group)
 end
 
-
+# Bubble Chart 
+function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
+	chart = deepcopy(BubbleChart)
+	size_default!(chart)
+	chart[:x] = scale_default(arr)
+	DCChart(chart, group)
+end
+function generate_accessor(col::Symbol)
+	if col == :DCCount
+		return "function (d) { return d.value.DCCount;}"
+	else
+		return string("function (d) { return d.value.", col, "_sum;}")
+	end
+end
+# Use :DCCount to access the count field
+function bubblechart(group::Group, x_col::Symbol, y_col::Symbol, r_col::Symbol, df::DataFrame)
+	chart = deepcopy(BubbleChart)
+	size_default!(chart)
+	chart[:width] = string(parse(Float64, chart[:width].value) * 2)
+	chart[:x] = "d3.scale.linear().domain([0,150])"
+	chart[:r] = "d3.scale.linear().domain([0,150])"
+	chart[:elasticX] = "true"
+	chart[:elasticY] = "true"
+	chart[:keyAccessor] = generate_accessor(x_col)
+	chart[:valueAccessor] = generate_accessor(y_col)
+	chart[:radiusValueAccessor] = generate_accessor(r_col)
+	DCChart(chart, group)
+end
+function bubblechart(dim::Dimension, x_col::Symbol, y_col::Symbol, r_col::Symbol, chart_groups::Vector{Group}, df::DataFrame)
+	group = reduce_master(dim, [x_col, y_col, r_col])
+	push!(chart_groups, group)
+	bubblechart(group, x_col, y_col, r_col, df)
+end
 # row chart 
 function rowchart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
 	chart = deepcopy(RowChart)
@@ -325,14 +358,6 @@ function datatablewidget(col::Symbol, columns::Vector{Symbol}, group_results::Bo
 end
 function datatablewidget(columns::Vector{Symbol})
 	datatablewidget(columns[1], columns, false)
-end
-
-# Bubble Chart 
-function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
-	chart = deepcopy(BubbleChart)
-	size_default!(chart)
-	chart[:x] = scale_default(arr)
-	chart
 end
 
 #=

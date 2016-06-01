@@ -14,8 +14,8 @@ reduce_sum(dim::Dimension) = Group(dim, string(dim.name)*"_sum", @sprintf("reduc
 =#
 function reduce_master(dim::Dimension, columns::Vector{Symbol})
   reduction_str = IOBuffer()
-  write(reduction_str, "function (p, v) {
-  ++p.count;
+  write(reduction_str, "reduce(function (p, v) {
+  ++p.DCCount;
 ")
   for col in columns
     write(reduction_str, "  p.", col, "_sum += v.", col, ";\n")
@@ -23,7 +23,7 @@ function reduce_master(dim::Dimension, columns::Vector{Symbol})
   write(reduction_str,"  return p;
 },
 function (p, v) {
-  --p.count;
+  --p.DCCount;
 ")
   for col in columns
     write(reduction_str, "  p.", col, "_sum -= v.", col, ";\n")
@@ -32,13 +32,13 @@ function (p, v) {
 },
 function () {
   return {
-    count: 0,
+    DCCount: 0,
 ")
   for col in columns
     write(reduction_str, "    ", col, "_sum: 0,\n")
   end
   write(reduction_str, "  };
-}")
+})")
   Group(dim, string(dim.name)*"_master", takebuf_string(reduction_str))
 end
 

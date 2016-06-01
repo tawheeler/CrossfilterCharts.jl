@@ -34,6 +34,7 @@ end
 
 type NotInferrableError <: Exception end
 
+# Works with linechart, barchart, rowchart, piechart. Requires previously constructed dimension.
 function quick_add(dcout::DCOut, column::Symbol, chart_constructor::Function)
 	if can_infer_chart(dcout.df[column])
 		i = 0
@@ -49,8 +50,16 @@ function quick_add(dcout::DCOut, column::Symbol, chart_constructor::Function)
 	end
 end
 
+function add_chart(dcout::DCOut, chart::DCChart)
+	push!(dcout.charts, chart)
+end
+
 function add_widget(dcout::DCOut, widget::DCWidget)
 	push!(dcout.widgets, widget)
+end
+
+function add_group(dcout::DCOut, group::Group)
+	push!(dcout.groups, group)
 end
 
 function datatablewidget(dcout::DCOut)
