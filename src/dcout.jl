@@ -53,6 +53,14 @@ function add_widget(dcout::DCOut, widget::DCWidget)
 	push!(dcout.widgets, widget)
 end
 
+function datatablewidget(dcout::DCOut)
+	columns = Symbol[]
+	for dim in dcout.dims
+		push!(columns, dim.name)
+	end
+	datatablewidget(columns)
+end
+
 function clear_charts(dcout::DCOut)
 	dcout.charts = DCChart[]
 	dcout.widgets = DCWidget[]

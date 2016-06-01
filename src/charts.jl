@@ -93,7 +93,7 @@ const BarChart = ChartType("barChart",
 	                  [CoordinateGridChart]) # StackableChart
 const LineChart = ChartType("lineChart",
 	                  [Attribute(:renderArea), Attribute(:dotRadius)],
-					  [CoordinateGridChart]) # StackableChart
+					  				[CoordinateGridChart]) # StackableChart
 const RowChart = ChartType("rowChart",
 										[Attribute(:gap), Attribute(:elasticX),
 										 Attribute(:labelOffsetX), Attribute(:labelOffsetY)],
@@ -108,7 +108,6 @@ const DataTableWidget = ChartType("dataTable",
 										[Attribute(:size), Attribute(:columns),
 										 Attribute(:sortBy), Attribute(:order)],
 										[WidgetChart])
-
 
 # DC Chart
 type DCChart
@@ -148,29 +147,50 @@ function Base.write(io::IO, chart::DCChart, indent::Int)
 	println(io, ";")
 end
 
-
 # DC Widget
 type DCWidget
 	typ::ChartType
 	parent::ASCIIString
 	html::ASCIIString
+	columns::Vector{Symbol}
+	group_results::Bool
 
 	function DCWidget(
 		typ::ChartType,
+		columns::Vector{Symbol} = Symbol[],
+		group_results::Bool = false,
 		html::ASCIIString = "",
 		parent::ASCIIString = @sprintf("chart_%06d", rand(0:999999)),
 		)
 
-		new(typ, parent, html)
+		new(typ, parent, html, columns, group_results)
 	end
 end
 
+# Inelegant way to handle the two types of widgets. Change if time permits.
 function randomize_parent(widget::DCWidget)
 	widget.parent = @sprintf("chart_%06d", rand(0:999999))
 	if widget.typ.concreteName == "dataCount"
-		widget.html = string("<div id=\"", widget.parent, """\"><span class="filter-count"></span> selected out of <span class="total-count"></span> records</div><br/>""")
+		widget.html = string("<div id=\"", widget.parent, """\"><span class="filter-count"></span> selected out of <span class="total-count"></span> records</div>""")
 	elseif widget.typ.concreteName == "dataTable"
-  	widget.html = string("<table class=\"table table-hover\" id=\"", widget.parent, "\"></table>")
+		html_str = IOBuffer()
+		if !widget.group_results
+			write(html_str, "
+			<style>
+			  #", widget.parent, " .dc-table-group{display:none}
+			</style>")
+		end
+		write(html_str, "
+			<table class=\"table table-hover\" id=\"", widget.parent, "\">
+			 <thead>
+            <tr>")
+		for key in widget.columns
+    	write(html_str, "<th>", key, "</th>")
+   	end
+    write(html_str, "</tr>
+        </thead>
+        </table>")
+		widget.html = takebuf_string(html_str)
 	end
 	Union{}
 end
@@ -289,7 +309,7 @@ function datatablewidget(col::Symbol, columns::Vector{Symbol}, group_results::Bo
 	if group_results
 		chart[:group] = string("function(d) {return d.", col, ";}")
 	else
-		chart[:group] = string("""function(d) {return "";}""")
+		chart[:group] = """function(d) {return "Showing All Results";}"""
 	end
 	col_str = IOBuffer()
 	print(col_str, "[\n")
@@ -298,11 +318,14 @@ function datatablewidget(col::Symbol, columns::Vector{Symbol}, group_results::Bo
   end
   print(col_str, "]")
   chart[:columns] = takebuf_string(col_str)
-  dcwidget = DCWidget(chart)
+  chart[:size] = "15"
+  dcwidget = DCWidget(chart, columns, group_results)
   randomize_parent(dcwidget)
   dcwidget
 end
-
+function datatablewidget(columns::Vector{Symbol})
+	datatablewidget(columns[1], columns, false)
+end
 #=
 # Bubble Chart 
 function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
