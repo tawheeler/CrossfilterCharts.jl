@@ -8,6 +8,40 @@ Base.write(io::IO, group::Group) = print(io, "var ", group.name, " = ", group.di
 reduce_count(dim::Dimension) = Group(dim, string(dim.name)*"_count", "reduceCount()")
 reduce_sum(dim::Dimension) = Group(dim, string(dim.name)*"_sum", @sprintf("reduceSum(function(d){ return d.%s; })", dim.name))
 
+#=
+  A master reduction which sums values from all provided columns and tallies a count. Useful for making
+  more complex charts like bubble charts.
+=#
+function reduce_master(dim::Dimension, columns::Vector{Symbol})
+  reduction_str = IOBuffer()
+  write(reduction_str, "function (p, v) {
+  ++p.count;
+")
+  for col in columns
+    write(reduction_str, "  p.", col, "_sum += v.", col, ";\n")
+  end
+  write(reduction_str,"  return p;
+},
+function (p, v) {
+  --p.count;
+")
+  for col in columns
+    write(reduction_str, "  p.", col, "_sum -= v.", col, ";\n")
+  end
+  write(reduction_str, "  return p;
+},
+function () {
+  return {
+    count: 0,
+")
+  for col in columns
+    write(reduction_str, "    ", col, "_sum: 0,\n")
+  end
+  write(reduction_str, "  };
+}")
+  Group(dim, string(dim.name)*"_master", takebuf_string(reduction_str))
+end
+
 infer_group{I<:Integer}(arr::AbstractDataArray{I}, dim::Dimension) = reduce_sum(dim)
 infer_group{F<:AbstractFloat}(arr::AbstractDataArray{F}, dim::Dimension) = reduce_sum(dim)
 infer_group{S<:AbstractString}(arr::AbstractDataArray{S}, dim::Dimension) = reduce_count(dim)

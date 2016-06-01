@@ -326,7 +326,7 @@ end
 function datatablewidget(columns::Vector{Symbol})
 	datatablewidget(columns[1], columns, false)
 end
-#=
+
 # Bubble Chart 
 function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart = deepcopy(BubbleChart)
@@ -334,7 +334,6 @@ function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart[:x] = scale_default(arr)
 	chart
 end
-=#
 
 
 #=
