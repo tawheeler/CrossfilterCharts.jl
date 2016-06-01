@@ -272,7 +272,6 @@ function rowchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	DCChart(chart, group)
 end
 
-
 # data count widget
 function datacountwidget()
 	chart = deepcopy(DataCountWidget)
@@ -284,10 +283,14 @@ function datacountwidget()
 end
 
 # data table widget
-function datatablewidget(col::Symbol, columns::Vector{Symbol})
+function datatablewidget(col::Symbol, columns::Vector{Symbol}, group_results::Bool=false)
 	chart = deepcopy(DataTableWidget)
 	chart[:dimension] = string(col)
-	chart[:group] = string("function(d) {return d.", col, ";}")
+	if group_results
+		chart[:group] = string("function(d) {return d.", col, ";}")
+	else
+		chart[:group] = string("""function(d) {return "";}""")
+	end
 	col_str = IOBuffer()
 	print(col_str, "[\n")
 	for key in columns
