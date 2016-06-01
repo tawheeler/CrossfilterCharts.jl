@@ -335,7 +335,6 @@ function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart
 end
 
-
 #=
 # Chart types
 DataCountWidget <: BaseChart
