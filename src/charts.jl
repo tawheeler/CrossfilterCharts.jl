@@ -300,9 +300,11 @@ function bubblechart(group::Group, x_col::Symbol, y_col::Symbol, r_col::Symbol, 
 	size_default!(chart)
 	chart[:width] = string(parse(Float64, chart[:width].value) * 2)
 	chart[:x] = "d3.scale.linear().domain([0,150])"
-	chart[:r] = "d3.scale.linear().domain([0,150])"
 	chart[:elasticX] = "true"
 	chart[:elasticY] = "true"
+	chart[:elasticRadius] = "true"
+	chart[:xAxisPadding] = "100"
+	chart[:yAxisPadding] = "100"
 	chart[:keyAccessor] = generate_accessor(x_col)
 	chart[:valueAccessor] = generate_accessor(y_col)
 	chart[:radiusValueAccessor] = generate_accessor(r_col)
