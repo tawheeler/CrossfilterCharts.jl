@@ -9,12 +9,14 @@ function write_html_head(io::IO)
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/dc/1.7.5/dc.css" rel="stylesheet">
 	<style>
     .fake-link {
-      color: blue;
+      color: #337ab7;
       text-decoration: underline;
       cursor: pointer;
       font-size: 12px;
     }
     .button-label {
+      color: #337ab7;
+      text-decoration: underline;
       cursor: pointer;
       margin-right: 20px;
     }
@@ -266,6 +268,16 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
     write(io, """<div style="width:$(iframe_width)px; height: $(iframe_height)px; overflow-y: auto;">""")
     write_source_html(io, dcout)
     write(io, """</div>""")
+
+    # TODO: Purely for testing purposes, remove when finished
+    f = open("output.html", "w")
+    write(f, """<script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>
+
+      """)
+    write(f, """<div style="width:$(iframe_width)px; height: $(iframe_height)px; overflow-y: auto;">""")
+    write_source_html(f, dcout)
+    write(f, """</div>""")
+    close(f)
 	else
 		# TODO
 		# decide what to do in the absence of IJulia

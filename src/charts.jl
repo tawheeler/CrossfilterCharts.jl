@@ -79,7 +79,7 @@ const CoordinateGridChart = ChartType([Attribute(:zoomScale),
 const AbstractBubbleChart = ChartType([Attribute(:r), Attribute(:radiusValueAccessor),
 										 									 Attribute(:minRadiusWithLabel), Attribute(:maxBubbleRelativeSize)],
 										 									[ColorChart])
-const WidgetChart = ChartType([Attribute(:group), Attribute(:dimension)])
+const WidgetChart = ChartType([Attribute(:dimension), Attribute(:group)])
 
 # StackableChart = ChartType(false, [Attribute{}])
 
@@ -169,6 +169,8 @@ function randomize_parent(widget::DCWidget)
 	widget.parent = @sprintf("chart_%06d", rand(0:999999))
 	if widget.typ.concreteName == "dataCount"
 		widget.html = string("<div id=\"", widget.parent, """\"><span class="filter-count"></span> selected out of <span class="total-count"></span> records</div><br/>""")
+	elseif widget.typ.concreteName == "dataTable"
+  	widget.html = string("<table class=\"table table-hover\" id=\"", widget.parent, "\"></table>")
 	end
 	Union{}
 end
@@ -285,16 +287,16 @@ end
 function datatablewidget(col::Symbol, columns::Vector{Symbol})
 	chart = deepcopy(DataTableWidget)
 	chart[:dimension] = string(col)
-	chart[:group] = "function(d) {return d;}"
+	chart[:group] = string("function(d) {return d.", col, ";}")
 	col_str = IOBuffer()
-	print(col_str, "[")
+	print(col_str, "[\n")
 	for key in columns
-		print(col_str, "'", key, "',\n")
+		print(col_str, "function(d) {return d.", key, ";},\n")
   end
   print(col_str, "]")
   chart[:columns] = takebuf_string(col_str)
   dcwidget = DCWidget(chart)
-  dcwidget.html = string("<table class=\"table table-hover\" id=\"", dcwidget.parent, "\"></table>")
+  randomize_parent(dcwidget)
   dcwidget
 end
 
