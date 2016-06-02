@@ -124,16 +124,28 @@ function quick_add!(dcout::DCOut, group::Group, chart_constructor::Function)
 	new_chart = chart_constructor(dcout.df[group.dim.name], group)
 	add_chart!(dcout, new_chart)
 end
-function quick_add!(dcout::DCOut, column::Symbol, chart_constructor::Function)
+"""
+Quickly build a chart using the group constructed from `column`.
+If multiple groups are found, an error is thrown unless `use_first`
+is set, in which case the first group found is used.
+"""
+function quick_add!(dcout::DCOut, column::Symbol, chart_constructor::Function, use_first::Bool = false)
 	groups = get_groups_by_col(dcout, column)
 	if length(groups) == 0
 		error("group from column \"", column, "\" not found")
 	elseif length(groups) > 1
-		error("unable to infer group: multiple groups use column \"", column, "\"")
+		if use_first
+			quick_add!(dcout, groups[1], chart_constructor)
+		else
+			error("unable to infer group: multiple groups use column \"", column, "\"")
+		end
 	else
 		quick_add!(dcout, groups[1], chart_constructor)
 	end
 end
+"""
+Quickly build a chart using the group with the given name.
+"""
 function quick_add!(dcout::DCOut, group_name::ASCIIString, chart_constructor::Function)
 	group = get_group_by_name(dcout, group_name)
 	quick_add!(dcout, group, chart_constructor)
