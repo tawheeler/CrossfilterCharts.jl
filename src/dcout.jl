@@ -245,11 +245,7 @@ function add_bubblechart!(dcout::DCOut, dim::Dimension, x_col::Symbol, y_col::Sy
 		get_dim_by_col(dcout, col)
 	end
 	group = reduce_master(dim, [x_col, y_col, r_col])
-	try
-		add_group!(dcout, group)
-	catch
-		# Group already exists, no need to add
-	end
+	add_group!(dcout, group)
 	add_chart!(dcout, bubblechart(group, x_col, y_col, r_col))
 	dcout
 end
