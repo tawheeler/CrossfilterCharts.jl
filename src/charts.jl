@@ -282,11 +282,18 @@ end
 
 Infer construction of a DC linechart based on the given group.
 """
-# TODO: Use different xUnits on Float and Int
-function linechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
+function linechart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	chart = deepcopy(LineChart)
 	size_default!(chart)
 	chart[:x] = scale_default(arr)
+	chart[:xUnits] = "dc.units.fp.precision(.0)"
+	DCChart(chart, group)
+end
+function linechart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
+	chart = deepcopy(LineChart)
+	size_default!(chart)
+	chart[:x] = scale_default(arr)
+	chart[:xUnits] = "dc.units.fp.precision($(group.dim.bin_width))"
 	DCChart(chart, group)
 end
 
