@@ -90,7 +90,8 @@ end
 """
 	add_datatablewidget!
 
-Construct and append a Data Table Widget to the DCOut object.
+Construct and append a Data Table Widget to the DCOut object. Requires
+a previously constructed dimension for the first column.
 """
 function add_datatablewidget!(dcout::DCOut)
 	columns = Symbol[]
@@ -101,6 +102,21 @@ function add_datatablewidget!(dcout::DCOut)
 	dcout
 end
 
+"""
+	add_bubblechart!
+
+Construct and append a Bubble Chart to the DCOut object. Requires a
+previously created dimension. x_col, y_col, and r_col denote the
+DataFrame fields whose sums will determine the x position, y position, and
+radius of the bubbles in the final chart.
+
+Use `:DCCount` to access the count field.
+"""
+function add_bubblechart!(dcout::DCOut, dim::Dimension, x_col::Symbol, y_col::Symbol, r_col::Symbol)
+	group = reduce_master(dim, [x_col, y_col, r_col])
+	add_group!(dcout, group)
+	add_chart!(dcout, bubblechart(group, x_col, y_col, r_col, dcout.df))
+end
 
 """
 	clear_charts!

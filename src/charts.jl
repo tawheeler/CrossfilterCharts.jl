@@ -293,13 +293,11 @@ end
 """
 	bubblechart
 
-Infer construction of a DC bubblechart based on the given group.
-Use `:DCCount` to access the count field
+Construct an empty custom DC bubblechart.
 """
-function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
+function bubblechart(group::Group)
 	chart = deepcopy(BubbleChart)
 	size_default!(chart)
-	chart[:x] = scale_default(arr)
 	DCChart(chart, group)
 end
 function _generate_accessor(col::Symbol)
@@ -323,11 +321,6 @@ function bubblechart(group::Group, x_col::Symbol, y_col::Symbol, r_col::Symbol, 
 	chart[:valueAccessor] = _generate_accessor(y_col)
 	chart[:radiusValueAccessor] = _generate_accessor(r_col)
 	DCChart(chart, group)
-end
-function bubblechart(dim::Dimension, x_col::Symbol, y_col::Symbol, r_col::Symbol, chart_groups::Vector{Group}, df::DataFrame)
-	group = reduce_master(dim, [x_col, y_col, r_col])
-	push!(chart_groups, group)
-	bubblechart(group, x_col, y_col, r_col, df)
 end
 
 """
