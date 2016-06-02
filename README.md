@@ -1,7 +1,7 @@
 # DC.jl
-A Julia package for automagical DC.js linked charts in your IJulia notebook
+A Julia package for automagical DC.js linked charts in your IJulia notebook.
 
-
+[Demonstration IJulia Notebook](http://nbviewer.ipython.org/github/tawheeler/DC.jl/blob/master/docs/DC.ipynb).
 
 [![Build Status](https://travis-ci.org/tawheeler/DC.jl.svg?branch=master)](https://travis-ci.org/tawheeler/DC.jl)
 [![](https://img.shields.io/badge/docs-latest-blue.svg)](https://tawheeler.github.io/DC.jl/latest)
