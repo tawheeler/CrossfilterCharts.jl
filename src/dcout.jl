@@ -43,6 +43,9 @@ end
 Append the Dimension to the list of dimensions in the DCOut object.
 """
 function add_dimension!(dcout::DCOut, dim::Dimension)
+	if length(find(x -> x.name == dim.name, dcout.dims)) > 0
+		error(string("attempt to add dimension \"", dim.name, "\" failed: a dimension with that name already exists"))
+	end
 	push!(dcout.dims, dim)
 	dcout
 end
@@ -73,6 +76,9 @@ end
 Append the Group to the list of groups in the DCOut object.
 """
 function add_group!(dcout::DCOut, group::Group)
+	if length(find(x -> x.name == group.name, dcout.groups)) > 0
+		error(string("attempt to add group \"", group.name, "\" failed: a group with that name already exists"))
+	end
 	push!(dcout.groups, group)
 	dcout
 end
@@ -114,7 +120,11 @@ Use `:DCCount` to access the count field.
 """
 function add_bubblechart!(dcout::DCOut, dim::Dimension, x_col::Symbol, y_col::Symbol, r_col::Symbol)
 	group = reduce_master(dim, [x_col, y_col, r_col])
-	add_group!(dcout, group)
+	try
+		add_group!(dcout, group)
+	catch
+		# Group already exists, no need to add
+	end
 	add_chart!(dcout, bubblechart(group, x_col, y_col, r_col, dcout.df))
 end
 
@@ -127,6 +137,37 @@ function clear_charts!(dcout::DCOut)
 	dcout.charts = DCChart[]
 	dcout.widgets = DCWidget[]
 	Union{}
+end
+
+"""
+	get_group_by_name
+
+Returns the group inside the given DCCout instance with the given name.
+"""
+function get_group_by_name(dcout::DCOut, name::ASCIIString)
+	results = find(x -> x.name == name, dcout.groups)
+	if length(results) == 0
+		error("group \"", name, "\" not found")
+	elseif length(results) == 1
+		return dcout.groups[results[1]]
+	else
+		error("dcout in invalid state: two groups have the same name")
+	end
+end
+
+"""
+	get_groups_by_col
+
+Returns the groups inside the given DCCout instance associated with
+the given column.
+"""
+function get_groups_by_col(dcout::DCOut, col::Symbol)
+	idxs = find(x -> x.dim.name == col, dcout.groups)
+	result = Group[]
+	for idx in idxs
+		push!(result, dcout.groups[idx])
+	end
+	result
 end
 
 """
