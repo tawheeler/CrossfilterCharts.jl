@@ -238,7 +238,11 @@ function size_default!(chart::ChartType)
 	chart[:height] = "225.0"
 end
 
-# bar chart
+"""
+	barchart
+
+Infer construction of a DC barchart based on the given group.
+"""
 function barchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	chart = deepcopy(BarChart)
 	size_default!(chart)
@@ -255,8 +259,11 @@ function barchart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
 	DCChart(chart, group)
 end
 
+"""
+	piechart
 
-# pie chart
+Infer construction of a DC piechart based on the given group.
+"""
 function piechart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
 	chart = deepcopy(PieChart)
 	size_default!(chart)
@@ -270,8 +277,11 @@ function piechart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	DCChart(chart, group)
 end
 
+"""
+	linechart
 
-# line chart
+Infer construction of a DC linechart based on the given group.
+"""
 # TODO: Use different xUnits on Float and Int
 function linechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart = deepcopy(LineChart)
@@ -280,21 +290,25 @@ function linechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	DCChart(chart, group)
 end
 
-# Bubble Chart 
+"""
+	bubblechart
+
+Infer construction of a DC bubblechart based on the given group.
+Use `:DCCount` to access the count field
+"""
 function bubblechart{R<:Real}(arr::AbstractDataArray{R}, group::Group)
 	chart = deepcopy(BubbleChart)
 	size_default!(chart)
 	chart[:x] = scale_default(arr)
 	DCChart(chart, group)
 end
-function generate_accessor(col::Symbol)
+function _generate_accessor(col::Symbol)
 	if col == :DCCount
 		return "function (d) { return d.value.DCCount;}"
 	else
 		return string("function (d) { return d.value.", col, "_sum;}")
 	end
 end
-# Use :DCCount to access the count field
 function bubblechart(group::Group, x_col::Symbol, y_col::Symbol, r_col::Symbol, df::DataFrame)
 	chart = deepcopy(BubbleChart)
 	size_default!(chart)
@@ -305,9 +319,9 @@ function bubblechart(group::Group, x_col::Symbol, y_col::Symbol, r_col::Symbol, 
 	chart[:elasticRadius] = "true"
 	chart[:xAxisPadding] = "100"
 	chart[:yAxisPadding] = "100"
-	chart[:keyAccessor] = generate_accessor(x_col)
-	chart[:valueAccessor] = generate_accessor(y_col)
-	chart[:radiusValueAccessor] = generate_accessor(r_col)
+	chart[:keyAccessor] = _generate_accessor(x_col)
+	chart[:valueAccessor] = _generate_accessor(y_col)
+	chart[:radiusValueAccessor] = _generate_accessor(r_col)
 	DCChart(chart, group)
 end
 function bubblechart(dim::Dimension, x_col::Symbol, y_col::Symbol, r_col::Symbol, chart_groups::Vector{Group}, df::DataFrame)
@@ -315,7 +329,12 @@ function bubblechart(dim::Dimension, x_col::Symbol, y_col::Symbol, r_col::Symbol
 	push!(chart_groups, group)
 	bubblechart(group, x_col, y_col, r_col, df)
 end
-# row chart 
+
+"""
+	rowchart
+
+Infer construction of a DC rowchart based on the given group.
+"""
 function rowchart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
 	chart = deepcopy(RowChart)
 	size_default!(chart)
@@ -327,17 +346,25 @@ function rowchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
 	DCChart(chart, group)
 end
 
-# data count widget
+"""
+	datacountwidget
+
+Construct a DC DataCountWidget.
+"""
 function datacountwidget()
 	chart = deepcopy(DataCountWidget)
 	chart[:dimension] = "cf"
 	chart[:group] = "all"
-  dcwidget = DCWidget(chart)
-  randomize_parent(dcwidget)
-  dcwidget
+	dcwidget = DCWidget(chart)
+	randomize_parent(dcwidget)
+	dcwidget
 end
 
-# data table widget
+"""
+	datatablewidget
+
+Construct a DC DataTableWidget.
+"""
 function datatablewidget(col::Symbol, columns::Vector{Symbol}, group_results::Bool=false)
 	chart = deepcopy(DataTableWidget)
 	chart[:dimension] = string(col)
