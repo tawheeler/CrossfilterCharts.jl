@@ -65,6 +65,8 @@
             
                 <li class="toctree-l3"><a href="#dcjl-documentation">DC.jl Documentation</a></li>
                 
+                    <li><a class="toctree-l4" href="#index">Index</a></li>
+                
             
             </ul>
         
@@ -109,34 +111,176 @@
               
                 <p><a id='DC.jl-Documentation-1'></a></p>
 <h1 id="dcjl-documentation">DC.jl Documentation</h1>
+<ul>
+<li><a href=".#DC.jl-Documentation-1">DC.jl Documentation</a><ul>
+<li><a href=".#Index-1">Index</a></li>
+</ul>
+</li>
+</ul>
 <p><a id='DC.dc' href='#DC.dc'>#</a>
 <strong><code>DC.dc</code></strong> &mdash; <em>Function</em>.</p>
 <pre><code>dc(df::DataFrame)
 </code></pre>
 
-<p>Construct a DC.js visualization based on the columns in the given DataFrame.</p>
-<p><a target='_blank' href='https://github.com/tawheeler/DC.jl/tree/d161800d5a502a7d3a0fdd87930446b2d0638844/src/dcout.jl#L49-53' class='documenter-source'>source</a><br>
-<a id='DC.can_infer_chart' href='#DC.can_infer_chart'>#</a>
+<p>Construct a DC.js visualization based on the columns in the given DataFrame. This is the easiest and most straightforward way to use DC.jl.</p>
+<p><a id='DC.rowchart' href='#DC.rowchart'>#</a>
+<strong><code>DC.rowchart</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>rowchart
+</code></pre>
+
+<p>Infer construction of a DC rowchart based on the given group.</p>
+<p><a id='DC.barchart' href='#DC.barchart'>#</a>
+<strong><code>DC.barchart</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>barchart
+</code></pre>
+
+<p>Infer construction of a DC barchart based on the given group.</p>
+<p><a id='DC.piechart' href='#DC.piechart'>#</a>
+<strong><code>DC.piechart</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>piechart
+</code></pre>
+
+<p>Infer construction of a DC piechart based on the given group.</p>
+<p><a id='DC.linechart' href='#DC.linechart'>#</a>
+<strong><code>DC.linechart</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>linechart
+</code></pre>
+
+<p>Infer construction of a DC linechart based on the given group.</p>
+<p><a id='DC.datacountwidget' href='#DC.datacountwidget'>#</a>
+<strong><code>DC.datacountwidget</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>datacountwidget
+</code></pre>
+
+<p>Construct a DC DataCountWidget.</p>
+<p><a id='DC.datatablewidget' href='#DC.datatablewidget'>#</a>
+<strong><code>DC.datatablewidget</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>datatablewidget
+</code></pre>
+
+<p>Construct a DC DataTableWidget.</p>
+<p><a id='DC.add_chart!' href='#DC.add_chart!'>#</a>
+<strong><code>DC.add_chart!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>add_chart!
+</code></pre>
+
+<p>Append the DCChart to the list of charts in the DCOut object.</p>
+<p><a id='DC.add_widget!' href='#DC.add_widget!'>#</a>
+<strong><code>DC.add_widget!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>add_widget!
+</code></pre>
+
+<p>Append the DCWidget to the list of widgets in the DCOut object.</p>
+<p><a id='DC.add_group!' href='#DC.add_group!'>#</a>
+<strong><code>DC.add_group!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>add_group!
+</code></pre>
+
+<p>Append the Group to the list of groups in the DCOut object.</p>
+<p><a id='DC.add_datacountwidget!' href='#DC.add_datacountwidget!'>#</a>
+<strong><code>DC.add_datacountwidget!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>add_datacountwidget!
+</code></pre>
+
+<p>Construct and append a Data Count Widget to the DCOut object.</p>
+<p><a id='DC.add_datatablewidget!' href='#DC.add_datatablewidget!'>#</a>
+<strong><code>DC.add_datatablewidget!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>add_datatablewidget!
+</code></pre>
+
+<p>Construct and append a Data Table Widget to the DCOut object.</p>
+<p><a id='DC.quick_add!' href='#DC.quick_add!'>#</a>
+<strong><code>DC.quick_add!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>quick_add!
+</code></pre>
+
+<p>A utility function for quickly building a chart and adding it. Works with linechart, barchart, rowchart, piechart. Requires previously a constructed group.</p>
+<p><a id='DC.clear_charts!' href='#DC.clear_charts!'>#</a>
+<strong><code>DC.clear_charts!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>clear_charts!
+</code></pre>
+
+<p>Remove all charts from the DCOut object.</p>
+<p><a id='DC.randomize_ids!' href='#DC.randomize_ids!'>#</a>
+<strong><code>DC.randomize_ids!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>randomize_ids!
+</code></pre>
+
+<p>Randomly re-initialize all dcout random ids. These are used when exporting to HTML to prevent charts from referencing one another across IJulia cells.</p>
+<p><a id='DC.reduce_count' href='#DC.reduce_count'>#</a>
+<strong><code>DC.reduce_count</code></strong> &mdash; <em>Function</em>.</p>
+<p>reduce_count</p>
+<p>A reduction for a Group that is simply reduceCount()</p>
+<p><a id='DC.reduce_sum' href='#DC.reduce_sum'>#</a>
+<strong><code>DC.reduce_sum</code></strong> &mdash; <em>Function</em>.</p>
+<p>reduce_sum</p>
+<p>A reduction for a Group that sums the values.</p>
+<p><a id='DC.reduce_master' href='#DC.reduce_master'>#</a>
+<strong><code>DC.reduce_master</code></strong> &mdash; <em>Function</em>.</p>
+<p>reduce_sum</p>
+<p>A master reduction which sums values from all provided columns and tallies a count.  Useful for making more complex charts like bubble charts.</p>
+<p><a id='DC.can_infer_chart' href='#DC.can_infer_chart'>#</a>
 <strong><code>DC.can_infer_chart</code></strong> &mdash; <em>Function</em>.</p>
 <pre><code>can_infer_chart(arr::AbstractDataArray)
 </code></pre>
 
 <p>Whether chart inference is supported for the given array type.</p>
-<p><a target='_blank' href='https://github.com/tawheeler/DC.jl/tree/d161800d5a502a7d3a0fdd87930446b2d0638844/src/charts.jl#L108-112' class='documenter-source'>source</a><br>
-<a id='DC.infer_chart' href='#DC.infer_chart'>#</a>
+<p><a id='DC.infer_dimension' href='#DC.infer_dimension'>#</a>
+<strong><code>DC.infer_dimension</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>infer_dimension
+</code></pre>
+
+<p>Constructs a Dimension suitable for the type in arr.</p>
+<p><a id='DC.infer_group' href='#DC.infer_group'>#</a>
+<strong><code>DC.infer_group</code></strong> &mdash; <em>Function</em>.</p>
+<p>infer_group</p>
+<p>Infer construction of a group based on the array datatype.</p>
+<p><a id='DC.infer_chart' href='#DC.infer_chart'>#</a>
 <strong><code>DC.infer_chart</code></strong> &mdash; <em>Function</em>.</p>
 <pre><code>infer_chart(arr::AbstractDataArray, group::Group)
 </code></pre>
 
 <p>Constructs a Chart suitable for the type in arr.</p>
-<p><a target='_blank' href='https://github.com/tawheeler/DC.jl/tree/d161800d5a502a7d3a0fdd87930446b2d0638844/src/charts.jl#L118-122' class='documenter-source'>source</a><br>
-<a id='DC.infer_dimension' href='#DC.infer_dimension'>#</a>
-<strong><code>DC.infer_dimension</code></strong> &mdash; <em>Function</em>.</p>
-<pre><code>infer_dimension(arr::AbstractDataArray, name::Symbol)
+<p><a id='DC.infer_dimensions!' href='#DC.infer_dimensions!'>#</a>
+<strong><code>DC.infer_dimensions!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>infer_dimensions!
 </code></pre>
 
-<p>Constructs a Dimension suitable for the type in arr.</p>
-<p><a target='_blank' href='https://github.com/tawheeler/DC.jl/tree/d161800d5a502a7d3a0fdd87930446b2d0638844/src/dimensions.jl#L20-24' class='documenter-source'>source</a><br></p>
+<p>Infer a dimension for each column in the DCOut DataFrame</p>
+<p><a id='DC.infer_groups!' href='#DC.infer_groups!'>#</a>
+<strong><code>DC.infer_groups!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>infer_groups!
+</code></pre>
+
+<p>Infer a group for each dimension in the DCOut DataFrame</p>
+<p><a id='Index-1'></a></p>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href=".#DC.add_chart!"><code>DC.add_chart!</code></a></li>
+<li><a href=".#DC.add_datacountwidget!"><code>DC.add_datacountwidget!</code></a></li>
+<li><a href=".#DC.add_datatablewidget!"><code>DC.add_datatablewidget!</code></a></li>
+<li><a href=".#DC.add_group!"><code>DC.add_group!</code></a></li>
+<li><a href=".#DC.add_widget!"><code>DC.add_widget!</code></a></li>
+<li><a href=".#DC.barchart"><code>DC.barchart</code></a></li>
+<li><a href=".#DC.can_infer_chart"><code>DC.can_infer_chart</code></a></li>
+<li><a href=".#DC.clear_charts!"><code>DC.clear_charts!</code></a></li>
+<li><a href=".#DC.datacountwidget"><code>DC.datacountwidget</code></a></li>
+<li><a href=".#DC.datatablewidget"><code>DC.datatablewidget</code></a></li>
+<li><a href=".#DC.dc"><code>DC.dc</code></a></li>
+<li><a href=".#DC.infer_chart"><code>DC.infer_chart</code></a></li>
+<li><a href=".#DC.infer_dimension"><code>DC.infer_dimension</code></a></li>
+<li><a href=".#DC.infer_dimensions!"><code>DC.infer_dimensions!</code></a></li>
+<li><a href=".#DC.infer_group"><code>DC.infer_group</code></a></li>
+<li><a href=".#DC.infer_groups!"><code>DC.infer_groups!</code></a></li>
+<li><a href=".#DC.linechart"><code>DC.linechart</code></a></li>
+<li><a href=".#DC.piechart"><code>DC.piechart</code></a></li>
+<li><a href=".#DC.quick_add!"><code>DC.quick_add!</code></a></li>
+<li><a href=".#DC.randomize_ids!"><code>DC.randomize_ids!</code></a></li>
+<li><a href=".#DC.reduce_count"><code>DC.reduce_count</code></a></li>
+<li><a href=".#DC.reduce_master"><code>DC.reduce_master</code></a></li>
+<li><a href=".#DC.reduce_sum"><code>DC.reduce_sum</code></a></li>
+<li><a href=".#DC.rowchart"><code>DC.rowchart</code></a></li>
+</ul>
               
             </div>
           </div>
@@ -175,5 +319,5 @@
 
 <!--
 MkDocs version : 0.15.3
-Build Date UTC : 2016-05-28 21:53:59.405157
+Build Date UTC : 2016-06-02 05:03:25.736997
 -->
