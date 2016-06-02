@@ -23,7 +23,7 @@ end
 
 
 """
-	infer_dimension(arr::AbstractDataArray, name::Symbol)
+	infer_dimension
 
 Constructs a Dimension suitable for the type in arr.
 """

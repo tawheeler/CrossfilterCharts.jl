@@ -19,7 +19,6 @@ add_datatablewidget!
 quick_add!
 clear_charts!
 randomize_ids!
-can_infer_chart
 reduce_count
 reduce_sum
 reduce_master

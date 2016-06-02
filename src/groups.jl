@@ -55,6 +55,11 @@ function () {
   Group(dim, string(dim.name)*"_master", takebuf_string(reduction_str))
 end
 
+"""
+  infer_group
+
+Infer construction of a group based on the array datatype.
+"""
 infer_group{I<:Integer}(arr::AbstractDataArray{I}, dim::Dimension) = reduce_sum(dim)
 infer_group{F<:AbstractFloat}(arr::AbstractDataArray{F}, dim::Dimension) = reduce_sum(dim)
 infer_group{S<:AbstractString}(arr::AbstractDataArray{S}, dim::Dimension) = reduce_count(dim)
