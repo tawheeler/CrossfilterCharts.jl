@@ -78,6 +78,16 @@ function add_group!(dcout::DCOut, group::Group)
 end
 
 """
+	add_datacountwidget!
+
+Construct and append a Data Count Widget to the DCOut object.
+"""
+function add_datacountwidget!(dcout::DCOut)
+	add_widget!(dcout, datacountwidget())
+	dcout
+end
+
+"""
 	add_datatablewidget!
 
 Construct and append a Data Table Widget to the DCOut object.

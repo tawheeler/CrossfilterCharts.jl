@@ -27,6 +27,7 @@ export
 	add_chart!,
 	add_widget!,
 	add_group!,
+	add_datacountwidget!,
 	add_datatablewidget!,
 	quick_add!,
 	clear_charts!,
