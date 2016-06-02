@@ -6,6 +6,7 @@ type DCOut
 	widgets::Vector{DCWidget}
 	output_id::Integer
 	elastic_height::Bool
+	html_debug::Bool
 
 	function DCOut(df::DataFrame)
 		retval = new()
@@ -16,6 +17,7 @@ type DCOut
 		retval.widgets = DCWidget[]
 		retval.output_id = rand(0:999999)
 		retval.elastic_height = false
+		retval.html_debug = false
 		retval
 	end
 end

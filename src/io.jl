@@ -273,15 +273,16 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
     write_source_html(io, dcout)
     write(io, """</div>""")
 
-    # TODO: Purely for testing purposes, remove when finished
-    f = open("output.html", "w")
-    write(f, """<script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>
+    if dcout.html_debug
+      f = open("output.html", "w")
+      write(f, """<script type="text/javascript" src="http://requirejs.org/docs/release/2.2.0/minified/require.js"></script>
 
-      """)
-    write(f, """<div style="width:$(iframe_width)px; height: $(iframe_height)px; overflow-y: auto;">""")
-    write_source_html(f, dcout)
-    write(f, """</div>""")
-    close(f)
+        """)
+      write(f, """<div style="width:$(iframe_width)px; height: $(iframe_height)px; overflow-y: auto;">""")
+      write_source_html(f, dcout)
+      write(f, """</div>""")
+      close(f)
+    end
 	else
 		# TODO
 		# decide what to do in the absence of IJulia
