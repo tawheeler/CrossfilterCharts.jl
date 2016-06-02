@@ -21,19 +21,49 @@ end
 type NotInferrableError <: Exception end
 
 """
-	quick_add!
+	get_group_by_name
 
-A utility function for quickly building a chart and adding it.
-Works with linechart, barchart, rowchart, piechart.
-Requires previously a constructed group.
+Returns the group inside the given DCCout instance with the given name.
 """
-function quick_add!(dcout::DCOut, column::Symbol, chart_constructor::Function)
-	if can_infer_chart(dcout.df[column])
-		i = findfirst(group->group.dim.name == column, dcout.groups)
-		new_chart = chart_constructor(dcout.df[column], dcout.groups[i])
-		push!(dcout.charts, new_chart)
+function get_group_by_name(dcout::DCOut, name::ASCIIString)
+	results = find(x -> x.name == name, dcout.groups)
+	if length(results) == 0
+		error("group \"", name, "\" not found")
+	elseif length(results) == 1
+		return dcout.groups[results[1]]
 	else
-		throw(NotInferrableError())
+		error("dcout in invalid state: two groups have the same name")
+	end
+end
+
+"""
+	get_groups_by_col
+
+Returns the groups inside the given DCCout instance associated with
+the given column.
+"""
+function get_groups_by_col(dcout::DCOut, col::Symbol)
+	idxs = find(x -> x.dim.name == col, dcout.groups)
+	result = Group[]
+	for idx in idxs
+		push!(result, dcout.groups[idx])
+	end
+	result
+end
+
+"""
+	get_group_by_name
+
+Returns the dimension inside the given DCCout instance created from the given column.
+"""
+function get_dim_by_col(dcout::DCOut, col::Symbol)
+	results = find(x -> x.name == col, dcout.dims)
+	if length(results) == 0
+		error("dimension from column \"", col, "\" not found")
+	elseif length(results) == 1
+		return dcout.dims[results[1]]
+	else
+		error("dcout in invalid state: two dimensions have the same name")
 	end
 end
 
@@ -81,6 +111,32 @@ function add_group!(dcout::DCOut, group::Group)
 	end
 	push!(dcout.groups, group)
 	dcout
+end
+
+"""
+	quick_add!
+
+A utility function for quickly building a chart and adding it.
+Works with linechart, barchart, rowchart, piechart.
+Requires previously a constructed group.
+"""
+function quick_add!(dcout::DCOut, group::Group, chart_constructor::Function)
+	new_chart = chart_constructor(dcout.df[group.dim.name], group)
+	add_chart!(dcout, new_chart)
+end
+function quick_add!(dcout::DCOut, column::Symbol, chart_constructor::Function)
+	groups = get_groups_by_col(dcout, column)
+	if length(groups) == 0
+		error("group from column \"", column, "\" not found")
+	elseif length(groups) > 1
+		error("unable to infer group: multiple groups use column \"", column, "\"")
+	else
+		quick_add!(dcout, groups[1], chart_constructor)
+	end
+end
+function quick_add!(dcout::DCOut, group_name::ASCIIString, chart_constructor::Function)
+	group = get_group_by_name(dcout, group_name)
+	quick_add!(dcout, group, chart_constructor)
 end
 
 """
@@ -137,37 +193,6 @@ function clear_charts!(dcout::DCOut)
 	dcout.charts = DCChart[]
 	dcout.widgets = DCWidget[]
 	Union{}
-end
-
-"""
-	get_group_by_name
-
-Returns the group inside the given DCCout instance with the given name.
-"""
-function get_group_by_name(dcout::DCOut, name::ASCIIString)
-	results = find(x -> x.name == name, dcout.groups)
-	if length(results) == 0
-		error("group \"", name, "\" not found")
-	elseif length(results) == 1
-		return dcout.groups[results[1]]
-	else
-		error("dcout in invalid state: two groups have the same name")
-	end
-end
-
-"""
-	get_groups_by_col
-
-Returns the groups inside the given DCCout instance associated with
-the given column.
-"""
-function get_groups_by_col(dcout::DCOut, col::Symbol)
-	idxs = find(x -> x.dim.name == col, dcout.groups)
-	result = Group[]
-	for idx in idxs
-		push!(result, dcout.groups[idx])
-	end
-	result
 end
 
 """
