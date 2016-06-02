@@ -264,7 +264,7 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		nrows = ceil(Int, ncharts/3)
 		iframe_height = nrows*275 + has_widget * 100
 
-    randomize_ids(dcout)
+    randomize_ids!(dcout)
 
     write(io, """<div style="width:$(iframe_width)px; height: $(iframe_height)px; overflow-y: auto;">""")
     write_source_html(io, dcout)

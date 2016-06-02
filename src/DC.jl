@@ -6,8 +6,6 @@ using DataFrames
 
 export
 	dc,
-	quick_add,
-	clear_charts,
 
 	DCOut,
 	DCChart,
@@ -24,13 +22,25 @@ export
 	piechart,
 	linechart,
 	datacountwidget,
+	datatablewidget,
+
+	add_chart!,
+	add_widget!,
+	add_group!,
+	add_datatablewidget!,
+	quick_add!,
+	clear_charts!,
+	randomize_ids!,
 
 	reduce_count,
 	reduce_sum,
 	can_infer_chart,
 	infer_dimension,
 	infer_group,
-	infer_chart
+	infer_chart,
+
+	infer_dimensions!,
+	infer_groups!
 
 include("dimensions.jl")
 include("groups.jl")

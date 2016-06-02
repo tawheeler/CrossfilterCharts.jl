@@ -12,7 +12,6 @@ end
 
 Rounds a number to the nearest half order of magnitude, {...0.1,0.5,1,5,10,50,100,500...}
 """
-
 function round_to_nearest_half_order_of_magnitude(w::Real)
   a = round(Int, log(w)/log(10))
   x_mid = 10.0^a
@@ -29,15 +28,10 @@ end
 Constructs a Dimension suitable for the type in arr.
 
 """
-
-# for integers
 function infer_dimension{I<:Integer}(arr::AbstractDataArray{I}, name::Symbol)
 	accessor = @sprintf("function(d){return d.%s; }", name)
 	Dimension(name, accessor)
 end
-
-
-# for floats
 function infer_dimension{F<:AbstractFloat}(arr::AbstractDataArray{F}, name::Symbol, desired_bincount::Int=10)
 
     lo,hi = extrema(arr)
@@ -46,8 +40,6 @@ function infer_dimension{F<:AbstractFloat}(arr::AbstractDataArray{F}, name::Symb
 	accessor = @sprintf("function(d){return Math.round(d.%s / %f)*%f; }", name, bin_width, bin_width)
 	Dimension(name, accessor, bin_width)
 end
-
-# for strings
 function infer_dimension{S<:AbstractString}(arr::AbstractDataArray{S}, name::Symbol)
 	accessor = @sprintf("function(d){return d.%s; }", name)
 	Dimension(name, accessor)
