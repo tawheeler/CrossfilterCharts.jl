@@ -35,6 +35,7 @@ export
 
 	reduce_count,
 	reduce_sum,
+	reduce_master,
 	can_infer_chart,
 	infer_dimension,
 	infer_group,
