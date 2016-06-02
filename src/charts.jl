@@ -315,6 +315,12 @@ function _generate_accessor(col::Symbol)
 		return string("function (d) { return d.value.", col, "_sum;}")
 	end
 end
+"""
+	bubbleChart
+
+Construct a bubblechart using the given master grouping and sums given by
+`x_col`, `y_col`, and `r_col` for x position, y position, and radius.
+"""
 function bubblechart(group::Group, x_col::Symbol, y_col::Symbol, r_col::Symbol)
 	chart = deepcopy(BubbleChart)
 	size_default!(chart)

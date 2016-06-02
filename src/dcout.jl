@@ -244,7 +244,9 @@ Use `:DCCount` to access the count field.
 function add_bubblechart!(dcout::DCOut, dim::Dimension, x_col::Symbol, y_col::Symbol, r_col::Symbol)
 	cols = [x_col, y_col, r_col]
 	for col in cols
-		get_dim_by_col(dcout, col)
+		if col != :DCCount
+			get_dim_by_col(dcout, col)
+		end
 	end
 	group = reduce_master(dim, [x_col, y_col, r_col])
 	add_group!(dcout, group)
