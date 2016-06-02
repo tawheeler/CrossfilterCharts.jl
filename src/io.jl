@@ -45,7 +45,7 @@ function write_html_body(io::IO, dcout::DCOut)
 		write_html_chart_entry(io, chart, 1)
 	end
 	print(io, """
-	<div style="clear:both;"></div>
+	<div style="clear:both; height: 1px"></div>
   """)
   for widget in dcout.widgets
     write_html_widget_entry(io, widget, 0)
@@ -257,12 +257,20 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		=#
 		
 		iframe_width = 975 # [pix]
-		row_height = 275 # [pix]
+		row_height = 275 # [pix]x`
 
 		ncharts = length(dcout.charts)
+    widget_height_addition = 0
+    for widget in dcout.widgets
+      if widget.typ.concreteName == "dataCount"
+        widget_height_addition += 15
+      else
+        widget_height_addition += 150
+      end
+    end
     has_widget = length(dcout.widgets) > 0
 		nrows = ceil(Int, ncharts/3)
-		iframe_height = nrows*275 + has_widget * 50 + 20
+		iframe_height = nrows*275 + widget_height_addition + 15
 
     randomize_ids!(dcout)
     if dcout.elastic_height

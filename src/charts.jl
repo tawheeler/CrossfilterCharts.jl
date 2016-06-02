@@ -318,7 +318,7 @@ end
 function bubblechart(group::Group, x_col::Symbol, y_col::Symbol, r_col::Symbol)
 	chart = deepcopy(BubbleChart)
 	size_default!(chart)
-	chart[:width] = string(parse(Float64, chart[:width].value) * 2)
+	chart[:width] = string(parse(Float64, chart[:width].value) * 1)
 	chart[:x] = "d3.scale.linear().domain([0,150])" # Will get overriden by elasticX
 	chart[:elasticX] = "true"
 	chart[:elasticY] = "true"
