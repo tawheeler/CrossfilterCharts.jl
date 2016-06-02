@@ -18,8 +18,6 @@ type DCOut
 	end
 end
 
-type NotInferrableError <: Exception end
-
 """
 	get_group_by_name
 
@@ -65,6 +63,21 @@ function get_dim_by_col(dcout::DCOut, col::Symbol)
 	else
 		error("dcout in invalid state: two dimensions have the same name")
 	end
+end
+
+"""
+	get_charts
+
+Returns all charts constructed from the given column of the given type.
+`chart_type` can be: piechart, barchart, linechart, rowchart, bubblechart
+"""
+function get_charts(dcout::DCOut, col::Symbol, chart_type::ASCIIString)
+	idxs = find(x -> (x.group.dim.name == col && uppercase(chart_type) == uppercase(x.typ.concreteName)), dcout.charts)
+	result = DCChart[]
+	for idx in idxs
+		push!(result, dcout.charts[idx])
+	end
+	result
 end
 
 """
@@ -121,7 +134,7 @@ Removes the given Group from the list of groups in the DCOut object.
 function remove_group!(dcout::DCOut, group::Group)
 	targets = find(x -> x.name == group.name, dcout.groups)
 	if length(targets) == 0
-		error("group \"", group, "\" does not exist")
+		error("group \"", group.name, "\" does not exist")
 	elseif length(targets) > 1
 		# This case should technically not happen, but if it is the case,
 		# we remove all groups that match `group`
@@ -129,6 +142,19 @@ function remove_group!(dcout::DCOut, group::Group)
 		remove_group!(dcout, group)
 	else
 		deleteat!(dcout.groups, targets[1])
+	end
+	dcout
+end
+
+function remove_chart!(dcout::DCOut, chart::DCChart)
+	targets = find(x -> x.parent == chart.parent, dcout.charts)
+	if length(targets) == 0
+		error("chart \"", chart.parent, "\" does not exist")
+	elseif length(targets) > 1
+		deleteat!(dcout.charts, targets[1])
+		remove_group!(dcout, group)
+	else
+		deleteat!(dcout.charts, targets[1])
 	end
 	dcout
 end
@@ -207,13 +233,17 @@ radius of the bubbles in the final chart.
 Use `:DCCount` to access the count field.
 """
 function add_bubblechart!(dcout::DCOut, dim::Dimension, x_col::Symbol, y_col::Symbol, r_col::Symbol)
+	cols = [x_col, y_col, r_col]
+	for col in cols
+		get_dim_by_col(dcout, col)
+	end
 	group = reduce_master(dim, [x_col, y_col, r_col])
 	try
 		add_group!(dcout, group)
 	catch
 		# Group already exists, no need to add
 	end
-	add_chart!(dcout, bubblechart(group, x_col, y_col, r_col, dcout.df))
+	add_chart!(dcout, bubblechart(group, x_col, y_col, r_col))
 	dcout
 end
 function add_bubblechart!(dcout::DCOut, dim_col::Symbol, x_col::Symbol, y_col::Symbol, r_col::Symbol)

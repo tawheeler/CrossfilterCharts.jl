@@ -262,7 +262,7 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		ncharts = length(dcout.charts)
     has_widget = length(dcout.widgets) > 0
 		nrows = ceil(Int, ncharts/3)
-		iframe_height = nrows*275 + has_widget * 100
+		iframe_height = nrows*275 + has_widget * 100 + 20
 
     randomize_ids!(dcout)
 

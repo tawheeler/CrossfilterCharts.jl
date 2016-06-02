@@ -21,6 +21,7 @@ export
 	barchart,
 	piechart,
 	linechart,
+	bubblechart,
 	datacountwidget,
 	datatablewidget,
 
@@ -29,6 +30,7 @@ export
 	add_group!,
 	add_datacountwidget!,
 	add_datatablewidget!,
+	add_bubblechart!,
 	quick_add!,
 	clear_charts!,
 	randomize_ids!,

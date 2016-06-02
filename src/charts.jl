@@ -314,7 +314,7 @@ function _generate_accessor(col::Symbol)
 		return string("function (d) { return d.value.", col, "_sum;}")
 	end
 end
-function bubblechart(group::Group, x_col::Symbol, y_col::Symbol, r_col::Symbol, df::DataFrame)
+function bubblechart(group::Group, x_col::Symbol, y_col::Symbol, r_col::Symbol)
 	chart = deepcopy(BubbleChart)
 	size_default!(chart)
 	chart[:width] = string(parse(Float64, chart[:width].value) * 2)
