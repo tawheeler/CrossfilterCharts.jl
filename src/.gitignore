@@ -1,4 +1,4 @@
 .ipynb_checkpoints/
-vinson_test.ipynb
+*.ipynb
 test_modified.htm
 dc[0-9]*_[0-9]*.htm

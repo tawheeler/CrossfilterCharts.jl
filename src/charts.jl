@@ -318,15 +318,16 @@ function bubblechart(group::Group, x_col::Symbol, y_col::Symbol, r_col::Symbol, 
 	chart = deepcopy(BubbleChart)
 	size_default!(chart)
 	chart[:width] = string(parse(Float64, chart[:width].value) * 2)
-	chart[:x] = "d3.scale.linear().domain([0,150])"
+	chart[:x] = "d3.scale.linear().domain([0,150])" # Will get overriden by elasticX
 	chart[:elasticX] = "true"
 	chart[:elasticY] = "true"
 	chart[:elasticRadius] = "true"
-	chart[:xAxisPadding] = "100"
-	chart[:yAxisPadding] = "100"
+	chart[:xAxisPadding] = "50"
+	chart[:yAxisPadding] = "50"
 	chart[:keyAccessor] = _generate_accessor(x_col)
 	chart[:valueAccessor] = _generate_accessor(y_col)
 	chart[:radiusValueAccessor] = _generate_accessor(r_col)
+	chart[:maxBubbleRelativeSize] = "0.2"
 	DCChart(chart, group)
 end
 

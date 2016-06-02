@@ -52,7 +52,8 @@ function () {
   end
   write(reduction_str, "  };
 })")
-  Group(dim, string(dim.name)*"_master", takebuf_string(reduction_str))
+  # Assign a random number to master reduction so it doesn't get overwritten
+  Group(dim, string(dim.name, "_master", rand(0:999999)), takebuf_string(reduction_str))
 end
 
 """

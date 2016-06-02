@@ -114,6 +114,26 @@ function add_group!(dcout::DCOut, group::Group)
 end
 
 """
+	remove_group!
+
+Removes the given Group from the list of groups in the DCOut object.
+"""
+function remove_group!(dcout::DCOut, group::Group)
+	targets = find(x -> x.name == group.name, dcout.groups)
+	if length(targets) == 0
+		error("group \"", group, "\" does not exist")
+	elseif length(targets) > 1
+		# This case should technically not happen, but if it is the case,
+		# we remove all groups that match `group`
+		deleteat!(dcout.groups, targets[1])
+		remove_group!(dcout, group)
+	else
+		deleteat!(dcout.groups, targets[1])
+	end
+	dcout
+end
+
+"""
 	quick_add!
 
 A utility function for quickly building a chart and adding it.
@@ -194,7 +214,12 @@ function add_bubblechart!(dcout::DCOut, dim::Dimension, x_col::Symbol, y_col::Sy
 		# Group already exists, no need to add
 	end
 	add_chart!(dcout, bubblechart(group, x_col, y_col, r_col, dcout.df))
+	dcout
 end
+function add_bubblechart!(dcout::DCOut, dim_col::Symbol, x_col::Symbol, y_col::Symbol, r_col::Symbol)
+	add_bubblechart!(dcout, get_dim_by_col(dcout, dim_col), x_col, y_col, r_col)
+end
+
 
 """
 	clear_charts!
