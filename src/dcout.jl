@@ -5,6 +5,7 @@ type DCOut
 	charts::Vector{DCChart}
 	widgets::Vector{DCWidget}
 	output_id::Integer
+	elastic_height::Bool
 
 	function DCOut(df::DataFrame)
 		retval = new()
@@ -14,6 +15,7 @@ type DCOut
 		retval.charts = DCChart[]
 		retval.widgets = DCWidget[]
 		retval.output_id = rand(0:999999)
+		retval.elastic_height = false
 		retval
 	end
 end
@@ -146,6 +148,11 @@ function remove_group!(dcout::DCOut, group::Group)
 	dcout
 end
 
+"""
+	remove_chart!
+
+Removes the given DCChart from the list of charts in the DCOut object.
+"""
 function remove_chart!(dcout::DCOut, chart::DCChart)
 	targets = find(x -> x.parent == chart.parent, dcout.charts)
 	if length(targets) == 0
@@ -250,7 +257,6 @@ function add_bubblechart!(dcout::DCOut, dim_col::Symbol, x_col::Symbol, y_col::S
 	add_bubblechart!(dcout, get_dim_by_col(dcout, dim_col), x_col, y_col, r_col)
 end
 
-
 """
 	clear_charts!
 
@@ -258,8 +264,29 @@ Remove all charts from the DCOut object.
 """
 function clear_charts!(dcout::DCOut)
 	dcout.charts = DCChart[]
+	dcout
+end
+
+"""
+	clear_widgets
+
+Remove all widgets from the DCOut object.
+"""
+function clear_widgets!(dcout::DCOut)
 	dcout.widgets = DCWidget[]
-	Union{}
+	dcout
+end
+
+"""
+	set_elastic_height!
+
+Changes the elasticity of the output div height. A value of true
+indicates that the div will resize to fit all elements without
+needing a scrollbar.
+"""
+function set_elastic_height!(dcout::DCOut, elastic_height::Bool)
+	dcout.elastic_height = elastic_height
+	dcout
 end
 
 """

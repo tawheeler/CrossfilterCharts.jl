@@ -25,14 +25,25 @@ export
 	datacountwidget,
 	datatablewidget,
 
+	get_group_by_name,
+	get_groups_by_col,
+	get_dim_by_col,
+	get_charts,
+
 	add_chart!,
 	add_widget!,
 	add_group!,
 	add_datacountwidget!,
 	add_datatablewidget!,
 	add_bubblechart!,
+
+	remove_group!,
+	remove_chart!,
+
 	quick_add!,
 	clear_charts!,
+	clear_widgets!,
+	set_elastic_height!,
 	randomize_ids!,
 
 	reduce_count,

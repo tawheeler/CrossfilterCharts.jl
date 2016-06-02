@@ -262,11 +262,14 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		ncharts = length(dcout.charts)
     has_widget = length(dcout.widgets) > 0
 		nrows = ceil(Int, ncharts/3)
-		iframe_height = nrows*275 + has_widget * 100 + 20
+		iframe_height = nrows*275 + has_widget * 50 + 20
 
     randomize_ids!(dcout)
-
-    write(io, """<div style="width:$(iframe_width)px; height: $(iframe_height)px; overflow-y: auto;">""")
+    if dcout.elastic_height
+      write(io, """<div style="width:$(iframe_width)px;">""")
+    else
+      write(io, """<div style="width:$(iframe_width)px; height: $(iframe_height)px; overflow-y: auto;">""")
+    end
     write_source_html(io, dcout)
     write(io, """</div>""")
 
