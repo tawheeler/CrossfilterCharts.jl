@@ -90,7 +90,7 @@ end
 Append the Dimension to the list of dimensions in the DCOut object.
 """
 function add_dimension!(dcout::DCOut, dim::Dimension)
-	if length(find(x -> x.name == dim.name, dcout.dims)) > 0
+	if findfirst(x -> x.name == dim.name, dcout.dims) > 0
 		error(string("attempt to add dimension \"", dim.name, "\" failed: a dimension with that name already exists"))
 	end
 	push!(dcout.dims, dim)

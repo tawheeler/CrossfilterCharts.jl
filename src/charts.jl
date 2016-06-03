@@ -79,8 +79,8 @@ const CoordinateGridChart = ChartType([Attribute(:zoomScale),
 	                             Attribute(:xAxisLabel), Attribute(:yAxisLabel)],
 								[BaseChart, ColorChart])
 const AbstractBubbleChart = ChartType([Attribute(:r), Attribute(:radiusValueAccessor),
-										 									 Attribute(:minRadiusWithLabel), Attribute(:maxBubbleRelativeSize)],
-										 									[ColorChart])
+									   Attribute(:minRadiusWithLabel), Attribute(:maxBubbleRelativeSize)],
+									 [ColorChart])
 const WidgetChart = ChartType([Attribute(:dimension), Attribute(:group)])
 
 # StackableChart = ChartType(false, [Attribute{}])
