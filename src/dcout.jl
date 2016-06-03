@@ -180,6 +180,8 @@ function quick_add!(dcout::DCOut, group::Group, chart_constructor::Function)
 	add_chart!(dcout, new_chart)
 end
 """
+	quick_add!
+
 Quickly build a chart using the group constructed from `column`.
 If multiple groups are found, an error is thrown unless `use_first`
 is set, in which case the first group found is used.
@@ -199,6 +201,8 @@ function quick_add!(dcout::DCOut, column::Symbol, chart_constructor::Function, u
 	end
 end
 """
+	quick_add!
+
 Quickly build a chart using the group with the given name.
 """
 function quick_add!(dcout::DCOut, group_name::ASCIIString, chart_constructor::Function)
