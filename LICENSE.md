@@ -1,4 +1,4 @@
-DC.jl is licensed under the MIT License:
+CrossfilterCharts.jl is licensed under the MIT License:
 
 > Copyright (c) 2016-present: Tim Wheeler, Liu Jiang,
 > Vinson Luo, and other contributors.
