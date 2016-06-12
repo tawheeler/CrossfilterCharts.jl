@@ -1,10 +1,10 @@
-# DC.jl
+# CrossfilterCharts.jl
 A Julia package for automagical DC.js linked charts in your IJulia notebook.
 
-[Demonstration IJulia Notebook](http://nbviewer.ipython.org/github/tawheeler/DC.jl/blob/master/docs/DC.ipynb).
+[Demonstration IJulia Notebook](http://nbviewer.ipython.org/github/tawheeler/CrossfilterCharts.jl/blob/master/docs/CrossfilterCharts.ipynb).
 
-[![Build Status](https://travis-ci.org/tawheeler/DC.jl.svg?branch=master)](https://travis-ci.org/tawheeler/DC.jl)
-[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://tawheeler.github.io/DC.jl/latest)
+[![Build Status](https://travis-ci.org/tawheeler/CrossfilterCharts.jl.svg?branch=master)](https://travis-ci.org/tawheeler/CrossfilterCharts.jl)
+[![](https://img.shields.io/badge/docs-latest-blue.svg)](https://tawheeler.github.io/CrossfilterCharts.jl/latest)
 
 ![Brushing and linking provided by DC.js](/docs/figures/demo002.png)
 
@@ -12,9 +12,9 @@ A Julia package for automagical DC.js linked charts in your IJulia notebook.
 
 Quickly take a data set and make exploratory data visualizations with just a few lines of code. Just open a Julia terminal and run:
 ```julia
-Pkg.clone("https://github.com/tawheeler/DC.jl.git")
+Pkg.clone("https://github.com/tawheeler/CrossfilterCharts.jl.git")
 ```
 
 ## Docs
 
-Documentation is available both via the Documenter.jl badges at the top of this page or in a [demonstration IJulia notebook](http://nbviewer.ipython.org/github/tawheeler/DC.jl/blob/master/docs/DC.ipynb).
+Documentation is available both via the Documenter.jl badges at the top of this page or in a [demonstration IJulia notebook](http://nbviewer.ipython.org/github/tawheeler/CrossfilterCharts.jl/blob/master/docs/CrossfilterCharts.ipynb).
