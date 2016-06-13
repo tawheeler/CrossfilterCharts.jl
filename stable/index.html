@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="A Julia package for automagical DC.js linked charts in your IJulia notebook">
+  <meta name="author" content="tawheeler">
+  
+  <title>DC.jl</title>
+  
+
+  <link rel="shortcut icon" href="./img/favicon.ico">
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700|Roboto+Slab:400,700|Inconsolata:400,700' rel='stylesheet' type='text/css'>
+
+  <link rel="stylesheet" href="./css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="./css/theme_extra.css" type="text/css" />
+  <link rel="stylesheet" href="./css/highlight.css">
+  <link href="./assets/Documenter.css" rel="stylesheet">
+
+  
+  <script>
+    // Current page data
+    var mkdocs_page_name = "None";
+    var mkdocs_page_input_path = "index.md";
+    var mkdocs_page_url = "/";
+  </script>
+  
+  <script src="./js/jquery-2.1.1.min.js"></script>
+  <script src="./js/modernizr-2.8.3.min.js"></script>
+  <script type="text/javascript" src="./js/highlight.pack.js"></script>
+  <script src="./js/theme.js"></script> 
+  <script src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+  <script src="./assets/mathjaxhelper.js"></script>
+
+  
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+      <div class="wy-side-nav-search">
+        <a href="." class="icon icon-home"> DC.jl</a>
+        <div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        <ul class="current">
+          
+            <li>
+    <li class="toctree-l1 current">
+        <a class="current" href=".">Home</a>
+        
+            <ul>
+            
+                <li class="toctree-l3"><a href="#dcjl-documentation">DC.jl Documentation</a></li>
+                
+                    <li><a class="toctree-l4" href="#index">Index</a></li>
+                
+            
+            </ul>
+        
+    </li>
+<li>
+          
+        </ul>
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href=".">DC.jl</a>
+      </nav>
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".">Docs</a> &raquo;</li>
+    
+      
+    
+    <li>Home</li>
+    <li class="wy-breadcrumbs-aside">
+      
+        
+          <a href="https://github.com/tawheeler/DC.jl" class="icon icon-github"> Edit on GitHub</a>
+        
+      
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main">
+            <div class="section">
+              
+                <p><a id='DC.jl-Documentation-1'></a></p>
+<h1 id="dcjl-documentation">DC.jl Documentation</h1>
+<ul>
+<li><a href=".#DC.jl-Documentation-1">DC.jl Documentation</a><ul>
+<li><a href=".#Index-1">Index</a></li>
+</ul>
+</li>
+</ul>
+<p><a id='CrossfilterCharts.dc' href='#CrossfilterCharts.dc'>#</a>
+<strong><code>CrossfilterCharts.dc</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>dc(df::DataFrame)
+</code></pre>
+
+<p>Construct a DC.js visualization based on the columns in the given DataFrame. This is the easiest and most straightforward way to use DC.jl.</p>
+<p><a id='CrossfilterCharts.rowchart' href='#CrossfilterCharts.rowchart'>#</a>
+<strong><code>CrossfilterCharts.rowchart</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>rowchart
+</code></pre>
+
+<p>Infer construction of a DC rowchart based on the given group.</p>
+<p><a id='CrossfilterCharts.barchart' href='#CrossfilterCharts.barchart'>#</a>
+<strong><code>CrossfilterCharts.barchart</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>barchart
+</code></pre>
+
+<p>Infer construction of a DC barchart based on the given group.</p>
+<p><a id='CrossfilterCharts.piechart' href='#CrossfilterCharts.piechart'>#</a>
+<strong><code>CrossfilterCharts.piechart</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>piechart
+</code></pre>
+
+<p>Infer construction of a DC piechart based on the given group.</p>
+<p><a id='CrossfilterCharts.linechart' href='#CrossfilterCharts.linechart'>#</a>
+<strong><code>CrossfilterCharts.linechart</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>linechart
+</code></pre>
+
+<p>Infer construction of a DC linechart based on the given group.</p>
+<p><a id='CrossfilterCharts.datacountwidget' href='#CrossfilterCharts.datacountwidget'>#</a>
+<strong><code>CrossfilterCharts.datacountwidget</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>datacountwidget
+</code></pre>
+
+<p>Construct a DC DataCountWidget.</p>
+<p><a id='CrossfilterCharts.datatablewidget' href='#CrossfilterCharts.datatablewidget'>#</a>
+<strong><code>CrossfilterCharts.datatablewidget</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>datatablewidget
+</code></pre>
+
+<p>Construct a DC DataTableWidget.</p>
+<p><a id='CrossfilterCharts.add_chart!' href='#CrossfilterCharts.add_chart!'>#</a>
+<strong><code>CrossfilterCharts.add_chart!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>add_chart!
+</code></pre>
+
+<p>Append the DCChart to the list of charts in the DCOut object.</p>
+<p><a id='CrossfilterCharts.add_widget!' href='#CrossfilterCharts.add_widget!'>#</a>
+<strong><code>CrossfilterCharts.add_widget!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>add_widget!
+</code></pre>
+
+<p>Append the DCWidget to the list of widgets in the DCOut object.</p>
+<p><a id='CrossfilterCharts.add_group!' href='#CrossfilterCharts.add_group!'>#</a>
+<strong><code>CrossfilterCharts.add_group!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>add_group!
+</code></pre>
+
+<p>Append the Group to the list of groups in the DCOut object.</p>
+<p><a id='CrossfilterCharts.add_datacountwidget!' href='#CrossfilterCharts.add_datacountwidget!'>#</a>
+<strong><code>CrossfilterCharts.add_datacountwidget!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>add_datacountwidget!
+</code></pre>
+
+<p>Construct and append a Data Count Widget to the DCOut object.</p>
+<p><a id='CrossfilterCharts.add_datatablewidget!' href='#CrossfilterCharts.add_datatablewidget!'>#</a>
+<strong><code>CrossfilterCharts.add_datatablewidget!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>add_datatablewidget!
+</code></pre>
+
+<p>Construct and append a Data Table Widget to the DCOut object. Requires a previously constructed dimension for the first column.</p>
+<p><a id='CrossfilterCharts.quick_add!' href='#CrossfilterCharts.quick_add!'>#</a>
+<strong><code>CrossfilterCharts.quick_add!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>quick_add!
+</code></pre>
+
+<p>Quickly build a chart using the group with the given name.</p>
+<pre><code>quick_add!
+</code></pre>
+
+<p>Quickly build a chart using the group constructed from <code>column</code>. If multiple groups are found, an error is thrown unless <code>use_first</code> is set, in which case the first group found is used.</p>
+<pre><code>quick_add!
+</code></pre>
+
+<p>A utility function for quickly building a chart and adding it. Works with linechart, barchart, rowchart, piechart. Requires previously a constructed group.</p>
+<p><a id='CrossfilterCharts.clear_charts!' href='#CrossfilterCharts.clear_charts!'>#</a>
+<strong><code>CrossfilterCharts.clear_charts!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>clear_charts!
+</code></pre>
+
+<p>Remove all charts from the DCOut object.</p>
+<p><a id='CrossfilterCharts.randomize_ids!' href='#CrossfilterCharts.randomize_ids!'>#</a>
+<strong><code>CrossfilterCharts.randomize_ids!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>randomize_ids!
+</code></pre>
+
+<p>Randomly re-initialize all dcout random ids. These are used when exporting to HTML to prevent charts from referencing one another across IJulia cells.</p>
+<p><a id='CrossfilterCharts.reduce_count' href='#CrossfilterCharts.reduce_count'>#</a>
+<strong><code>CrossfilterCharts.reduce_count</code></strong> &mdash; <em>Function</em>.</p>
+<p>reduce_count</p>
+<p>A reduction for a Group that is simply reduceCount()</p>
+<p><a id='CrossfilterCharts.reduce_sum' href='#CrossfilterCharts.reduce_sum'>#</a>
+<strong><code>CrossfilterCharts.reduce_sum</code></strong> &mdash; <em>Function</em>.</p>
+<p>reduce_sum</p>
+<p>A reduction for a Group that sums the values.</p>
+<p><a id='CrossfilterCharts.reduce_master' href='#CrossfilterCharts.reduce_master'>#</a>
+<strong><code>CrossfilterCharts.reduce_master</code></strong> &mdash; <em>Function</em>.</p>
+<p>reduce_sum</p>
+<p>A master reduction which sums values from all provided columns and tallies a count.  Useful for making more complex charts like bubble charts.</p>
+<p><a id='CrossfilterCharts.can_infer_chart' href='#CrossfilterCharts.can_infer_chart'>#</a>
+<strong><code>CrossfilterCharts.can_infer_chart</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>can_infer_chart(arr::AbstractDataArray)
+</code></pre>
+
+<p>Whether chart inference is supported for the given array type.</p>
+<p><a id='CrossfilterCharts.infer_dimension' href='#CrossfilterCharts.infer_dimension'>#</a>
+<strong><code>CrossfilterCharts.infer_dimension</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>infer_dimension
+</code></pre>
+
+<p>Constructs a Dimension suitable for the type in arr.</p>
+<p><a id='CrossfilterCharts.infer_group' href='#CrossfilterCharts.infer_group'>#</a>
+<strong><code>CrossfilterCharts.infer_group</code></strong> &mdash; <em>Function</em>.</p>
+<p>infer_group</p>
+<p>Infer construction of a group based on the array datatype.</p>
+<p><a id='CrossfilterCharts.infer_chart' href='#CrossfilterCharts.infer_chart'>#</a>
+<strong><code>CrossfilterCharts.infer_chart</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>infer_chart(arr::AbstractDataArray, group::Group)
+</code></pre>
+
+<p>Constructs a Chart suitable for the type in arr.</p>
+<p><a id='CrossfilterCharts.infer_dimensions!' href='#CrossfilterCharts.infer_dimensions!'>#</a>
+<strong><code>CrossfilterCharts.infer_dimensions!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>infer_dimensions!
+</code></pre>
+
+<p>Infer a dimension for each column in the DCOut DataFrame</p>
+<p><a id='CrossfilterCharts.infer_groups!' href='#CrossfilterCharts.infer_groups!'>#</a>
+<strong><code>CrossfilterCharts.infer_groups!</code></strong> &mdash; <em>Function</em>.</p>
+<pre><code>infer_groups!
+</code></pre>
+
+<p>Infer a group for each dimension in the DCOut DataFrame</p>
+<p><a id='Index-1'></a></p>
+<h2 id="index">Index</h2>
+<ul>
+<li><a href=".#CrossfilterCharts.add_chart!"><code>CrossfilterCharts.add_chart!</code></a></li>
+<li><a href=".#CrossfilterCharts.add_datacountwidget!"><code>CrossfilterCharts.add_datacountwidget!</code></a></li>
+<li><a href=".#CrossfilterCharts.add_datatablewidget!"><code>CrossfilterCharts.add_datatablewidget!</code></a></li>
+<li><a href=".#CrossfilterCharts.add_group!"><code>CrossfilterCharts.add_group!</code></a></li>
+<li><a href=".#CrossfilterCharts.add_widget!"><code>CrossfilterCharts.add_widget!</code></a></li>
+<li><a href=".#CrossfilterCharts.barchart"><code>CrossfilterCharts.barchart</code></a></li>
+<li><a href=".#CrossfilterCharts.can_infer_chart"><code>CrossfilterCharts.can_infer_chart</code></a></li>
+<li><a href=".#CrossfilterCharts.clear_charts!"><code>CrossfilterCharts.clear_charts!</code></a></li>
+<li><a href=".#CrossfilterCharts.datacountwidget"><code>CrossfilterCharts.datacountwidget</code></a></li>
+<li><a href=".#CrossfilterCharts.datatablewidget"><code>CrossfilterCharts.datatablewidget</code></a></li>
+<li><a href=".#CrossfilterCharts.dc"><code>CrossfilterCharts.dc</code></a></li>
+<li><a href=".#CrossfilterCharts.infer_chart"><code>CrossfilterCharts.infer_chart</code></a></li>
+<li><a href=".#CrossfilterCharts.infer_dimension"><code>CrossfilterCharts.infer_dimension</code></a></li>
+<li><a href=".#CrossfilterCharts.infer_dimensions!"><code>CrossfilterCharts.infer_dimensions!</code></a></li>
+<li><a href=".#CrossfilterCharts.infer_group"><code>CrossfilterCharts.infer_group</code></a></li>
+<li><a href=".#CrossfilterCharts.infer_groups!"><code>CrossfilterCharts.infer_groups!</code></a></li>
+<li><a href=".#CrossfilterCharts.linechart"><code>CrossfilterCharts.linechart</code></a></li>
+<li><a href=".#CrossfilterCharts.piechart"><code>CrossfilterCharts.piechart</code></a></li>
+<li><a href=".#CrossfilterCharts.quick_add!"><code>CrossfilterCharts.quick_add!</code></a></li>
+<li><a href=".#CrossfilterCharts.randomize_ids!"><code>CrossfilterCharts.randomize_ids!</code></a></li>
+<li><a href=".#CrossfilterCharts.reduce_count"><code>CrossfilterCharts.reduce_count</code></a></li>
+<li><a href=".#CrossfilterCharts.reduce_master"><code>CrossfilterCharts.reduce_master</code></a></li>
+<li><a href=".#CrossfilterCharts.reduce_sum"><code>CrossfilterCharts.reduce_sum</code></a></li>
+<li><a href=".#CrossfilterCharts.rowchart"><code>CrossfilterCharts.rowchart</code></a></li>
+</ul>
+              
+            </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+    
+  </div>
+
+  Built with <a href="http://www.mkdocs.org">MkDocs</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+	  
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+<div class="rst-versions" role="note" style="cursor: pointer">
+    <span class="rst-current-version" data-toggle="rst-current-version">
+      
+          <a href="https://github.com/tawheeler/DC.jl" class="icon icon-github" style="float: left; color: #fcfcfc"> GitHub</a>
+      
+      
+      
+    </span>
+</div>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 0.15.3
+Build Date UTC : 2016-06-13 00:26:28.427609
+-->
