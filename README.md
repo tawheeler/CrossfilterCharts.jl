@@ -1,5 +1,5 @@
 # CrossfilterCharts.jl
-A Julia package for automagical DC.js linked charts in your IJulia notebook.
+A Julia package for automagical DC.js linked charts in your IJulia notebook - used to be DC.jl.
 
 [Demonstration IJulia Notebook](http://nbviewer.ipython.org/github/tawheeler/CrossfilterCharts.jl/blob/master/docs/CrossfilterCharts.ipynb).
 
