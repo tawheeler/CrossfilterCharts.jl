@@ -10,7 +10,7 @@ A Julia package for automagical DC.js linked charts in your IJulia notebook - us
 
 ## Install
 
-Quickly take a data set and make exploratory data visualizations with just a few lines of code. Just open a Julia terminal and run:
+Quickly take a data set and make exploratory data visualizations with just a few lines of code. In a Julia terminal run:
 ```julia
 Pkg.add("CrossfilterCharts")
 ```
