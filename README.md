@@ -8,11 +8,11 @@ A Julia package for automagical DC.js linked charts in your IJulia notebook - us
 
 ![Brushing and linking provided by DC.js](/docs/figures/demo002.png)
 
-## Git It
+## Install
 
 Quickly take a data set and make exploratory data visualizations with just a few lines of code. Just open a Julia terminal and run:
 ```julia
-Pkg.clone("https://github.com/tawheeler/CrossfilterCharts.jl.git")
+Pkg.add("CrossfilterCharts")
 ```
 
 ## Docs
