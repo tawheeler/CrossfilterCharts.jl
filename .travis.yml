@@ -1,17 +1,18 @@
-# Documentation: http://docs.travis-ci.com/user/languages/julia/
 language: julia
-os:
-  - linux
-  # - osx
+sudo: required
+dist: trusty
 julia:
-  - release
+  - 0.4
   - 0.5
+  - nightly
 notifications:
   email: false
-script:
-  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
-  - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.test("CrossfilterCharts"; coverage=true)'
+before_install:
+  - sudo apt-get -qq update
+#script: # use the default script section which is equivalent to the following
+#  - if [[ -a .git/shallow ]]; then git fetch --unshallow; fi
+#  - julia --check-bounds=yes -e 'Pkg.clone(pwd()); Pkg.build("PGFPlots"); Pkg.test("PGFPlots"; coverage=true)'
 after_success:
   - julia -e 'Pkg.clone("https://github.com/JuliaDocs/Documenter.jl")'
   - julia -e 'cd(Pkg.dir("CrossfilterCharts")); include(joinpath("docs", "make.jl"))'
-  # - julia -e 'cd(Pkg.dir("DC")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
+#  - julia -e 'cd(Pkg.dir("CrossfilterCharts")); Pkg.add("Coverage"); using Coverage; Coveralls.submit(Coveralls.process_folder())'
