@@ -84,13 +84,14 @@ function write_json_entry(io, names::Vector{Symbol}, values::Vector{Any})
 	print(io, "}")
 end
 
-function write_data(io::IO, df::DataFrame)
-	colnames = names(df)
-	values = Array(Any, ncol(df))
+function write_data(io::IO, dcout::DCOut)
+    df = dcout.df
+	values = Array(Any, length(dcout.dims))
+    colnames = map(dim->dim.name, dcout.dims)
 	print(io, "data = [")
 	for i in 1:nrow(df)
-		for j in 1:ncol(df)
-			values[j] = df[i,j]
+		for (j,dim) in enumerate(dcout.dims)
+			values[j] = df[i,dim.name]
 		end
 		write_json_entry(io, colnames, values)
 		if i < nrow(df)
@@ -201,7 +202,7 @@ function write_script(io::IO, dcout::DCOut, dependencies::Vector{Dependency})
 	end
 	print(io, ") {\n")
 
-	write_data(io, dcout.df)
+	write_data(io, dcout)
 
 	# crossfilter
 	println(io, "var cf = crossfilter(data);")

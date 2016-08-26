@@ -215,18 +215,17 @@ end
 
 Whether chart inference is supported for the given array type.
 """
-can_infer_chart(arr::AbstractDataArray) = false
-can_infer_chart{I<:Integer}(arr::AbstractDataArray{I}) = true
-can_infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}) = true
-can_infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}) = true
+can_infer_chart(arr::AbstractDataArray) = !any(isna, arr)
+can_infer_chart{I<:Integer}(arr::AbstractDataArray{I}) = !any(isna, arr)
+can_infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}) = !any(isna, arr) && !any(isinf, arr) && !any(isnan, arr)
+can_infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}) = !any(isna, arr)
 
 """
 	infer_chart(arr::AbstractDataArray, group::Group)
 
 Constructs a Chart suitable for the type in arr.
 """
-infer_chart{I<:Integer}(arr::AbstractDataArray{I}, group::Group) = barchart(arr, group)
-infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group) = barchart(arr, group)
+infer_chart{R<:Real}(arr::AbstractDataArray{R}, group::Group) = barchart(arr, group)
 infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group) = piechart(arr, group)
 
 function scale_default{R<:Real}(arr::AbstractDataArray{R})
