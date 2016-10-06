@@ -1,16 +1,16 @@
 type Attribute
 	name::Symbol
-	value::ASCIIString
+	value::String
 	Attribute(name::Symbol) = new(name, "")
 end
 const NULL_ATTRIBUTE = Attribute(:NULL)
 
 type ChartType
-	concreteName::ASCIIString
+	concreteName::String
 	attributes::Vector{Attribute}
 	ancestors::Vector{ChartType}
 	ChartType{A<:Attribute}(attributes::Vector{A}, ancestors::Vector{ChartType}=ChartType[]) = new("NONE", convert(Vector{Attribute}, attributes), ancestors)
-	ChartType{A<:Attribute}(concreteName::ASCIIString, attributes::Vector{A}, ancestors::Vector{ChartType}=ChartType[]) = new(concreteName, convert(Vector{Attribute}, attributes), ancestors)
+	ChartType{A<:Attribute}(concreteName::String, attributes::Vector{A}, ancestors::Vector{ChartType}=ChartType[]) = new(concreteName, convert(Vector{Attribute}, attributes), ancestors)
 end
 function Base.deepcopy(chart_type::ChartType)
 	name = chart_type.concreteName
@@ -48,7 +48,7 @@ function Base.getindex(chart_type::ChartType, s::Symbol)
 
 	NULL_ATTRIBUTE
 end
-function Base.setindex!(chart_type::ChartType, v::ASCIIString, s::Symbol)
+function Base.setindex!(chart_type::ChartType, v::String, s::Symbol)
 	for a in chart_type.attributes
 		if a.name == s
 			a.value = v
@@ -115,14 +115,14 @@ const DataTableWidget = ChartType("dataTable",
 type DCChart
 	group::Group
 	typ::ChartType
-	title::ASCIIString
-	parent::ASCIIString
+	title::String
+	parent::String
 
 	function DCChart(
 		typ::ChartType,
 		group::Group;
-		title::ASCIIString = "Chart for " * string(group.dim.name),
-		parent::ASCIIString = @sprintf("chart_%06d", rand(0:999999)),
+		title::String = "Chart for " * string(group.dim.name),
+		parent::String = @sprintf("chart_%06d", rand(0:999999)),
 		)
 
 		new(group, typ, title, parent)
@@ -152,8 +152,8 @@ end
 # DC Widget
 type DCWidget
 	typ::ChartType
-	parent::ASCIIString
-	html::ASCIIString
+	parent::String
+	html::String
 	columns::Vector{Symbol}
 	group_results::Bool
 
@@ -161,8 +161,8 @@ type DCWidget
 		typ::ChartType,
 		columns::Vector{Symbol} = Symbol[],
 		group_results::Bool = false,
-		html::ASCIIString = "",
-		parent::ASCIIString = @sprintf("chart_%06d", rand(0:999999)),
+		html::String = "",
+		parent::String = @sprintf("chart_%06d", rand(0:999999)),
 		)
 
 		new(typ, parent, html, columns, group_results)

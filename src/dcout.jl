@@ -27,7 +27,7 @@ end
 
 Returns the group inside the given DCCout instance with the given name.
 """
-function get_group_by_name(dcout::DCOut, name::ASCIIString)
+function get_group_by_name(dcout::DCOut, name::String)
 	results = find(x -> x.name == name, dcout.groups)
 	if length(results) == 0
 		error("group \"", name, "\" not found")
@@ -75,7 +75,7 @@ end
 Returns all charts constructed from the given column of the given type.
 `chart_type` can be: piechart, barchart, linechart, rowchart, bubblechart
 """
-function get_charts(dcout::DCOut, col::Symbol, chart_type::ASCIIString)
+function get_charts(dcout::DCOut, col::Symbol, chart_type::String)
 	idxs = find(x -> (x.group.dim.name == col && uppercase(chart_type) == uppercase(x.typ.concreteName)), dcout.charts)
 	result = DCChart[]
 	for idx in idxs
@@ -205,7 +205,7 @@ end
 
 Quickly build a chart using the group with the given name.
 """
-function quick_add!(dcout::DCOut, group_name::ASCIIString, chart_constructor::Function)
+function quick_add!(dcout::DCOut, group_name::String, chart_constructor::Function)
 	group = get_group_by_name(dcout, group_name)
 	quick_add!(dcout, group, chart_constructor)
 end

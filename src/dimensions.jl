@@ -1,9 +1,9 @@
 type Dimension
 	name::Symbol # the column name in dataframe
-	accessor::ASCIIString #var paymentsByTotal = payments.dimension(function(d) { return d.total; });
+	accessor::String #var paymentsByTotal = payments.dimension(function(d) { return d.total; });
 	bin_width::Float64 # discretization width, NaN if unused
 
-	Dimension(name::Symbol, accessor::ASCIIString, bin_width::Float64=NaN) = new(name, accessor, bin_width)
+	Dimension(name::Symbol, accessor::String, bin_width::Float64=NaN) = new(name, accessor, bin_width)
 end
 
 

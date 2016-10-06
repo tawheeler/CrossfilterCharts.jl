@@ -1,7 +1,7 @@
 type Group
 	dim::Dimension
-	name::ASCIIString
-	reduction::ASCIIString
+	name::String
+	reduction::String
 end
 Base.write(io::IO, group::Group) = print(io, "var ", group.name, " = ", group.dim.name, ".group().", group.reduction, ";")
 

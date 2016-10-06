@@ -1,6 +1,6 @@
 type Dependency
-  name::ASCIIString
-  path::ASCIIString
+  name::String
+  path::String
   has_export::Bool
 end
 
@@ -132,7 +132,7 @@ var update_reset_buttons = function(chart) {
   d3.select("#reset_all_btn_""", dcout.output_id,
   """").remove();
   d3.select("#heading_" + chart_names[idx]).select(".chart-reset").remove();
-  
+
   if (filter_in_use) {
     d3.select("#reset_all_well_""", dcout.output_id, """")
       .append("a")
@@ -147,7 +147,7 @@ var update_reset_buttons = function(chart) {
         }
         dc.redrawAll();
       });
-    
+
     if (chart.filters().length > 0) {
       d3.select("#heading_" + chart_names[idx])
         .append("span")
@@ -256,7 +256,7 @@ function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
 		2 - generate iframe html + js page
 		3 - write link to it
 		=#
-		
+
 		iframe_width = 975 # [pix]
 		row_height = 275 # [pix]x`
 
