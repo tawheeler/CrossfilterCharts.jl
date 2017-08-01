@@ -86,7 +86,7 @@ end
 
 function write_data(io::IO, dcout::DCOut)
     df = dcout.df
-	values = Array(Any, length(dcout.dims))
+	values = Array{Any}(length(dcout.dims))
     colnames = map(dim->dim.name, dcout.dims)
 	print(io, "data = [")
 	for i in 1:nrow(df)
@@ -247,7 +247,7 @@ function write_source_html(io::IO, dcout::DCOut)
 	write_script(io, dcout, dependencies)
 end
 
-function Base.writemime(io::IO, ::MIME"text/html", dcout::DCOut)
+function Base.show(io::IO, ::MIME"text/html", dcout::DCOut)
 
 	# If IJulia is present, go for it
 	if isdefined(Main, :IJulia)

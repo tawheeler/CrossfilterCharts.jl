@@ -14,11 +14,11 @@ type ChartType
 end
 function Base.deepcopy(chart_type::ChartType)
 	name = chart_type.concreteName
-	attributes = Array(Attribute, length(chart_type.attributes))
+	attributes = Array{Attribute}(length(chart_type.attributes))
 	for (i,a) in enumerate(chart_type.attributes)
 		attributes[i] = deepcopy(a)
 	end
-	ancestors = Array(ChartType, length(chart_type.ancestors))
+	ancestors = Array{ChartType}(length(chart_type.ancestors))
 	for (i,ancestor) in enumerate(chart_type.ancestors)
 		ancestors[i] = deepcopy(ancestor)
 	end
