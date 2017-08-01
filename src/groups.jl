@@ -1,4 +1,4 @@
-type Group
+mutable struct Group
 	dim::Dimension
 	name::String
 	reduction::String

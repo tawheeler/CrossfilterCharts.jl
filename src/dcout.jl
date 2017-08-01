@@ -1,4 +1,4 @@
-type DCOut
+mutable struct DCOut
 	df::DataFrame
 	dims::Vector{Dimension}
 	groups::Vector{Group}

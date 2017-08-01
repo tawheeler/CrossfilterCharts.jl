@@ -1,7 +1,7 @@
-type Dependency
-  name::String
-  path::String
-  has_export::Bool
+struct Dependency
+    name::String
+    path::String
+    has_export::Bool
 end
 
 function write_html_head(io::IO)
