@@ -61,6 +61,6 @@ end
 
 Infer construction of a group based on the array datatype.
 """
-infer_group{I<:Integer}(arr::AbstractDataArray{I}, dim::Dimension) = reduce_sum(dim)
-infer_group{F<:AbstractFloat}(arr::AbstractDataArray{F}, dim::Dimension) = reduce_sum(dim)
-infer_group{S<:AbstractString}(arr::AbstractDataArray{S}, dim::Dimension) = reduce_count(dim)
+infer_group(arr::AbstractDataArray{I}, dim::Dimension) where {I<:Integer} = reduce_sum(dim)
+infer_group(arr::AbstractDataArray{F}, dim::Dimension) where {F<:AbstractFloat} = reduce_sum(dim)
+infer_group(arr::AbstractDataArray{S}, dim::Dimension) where {S<:AbstractString} = reduce_count(dim)

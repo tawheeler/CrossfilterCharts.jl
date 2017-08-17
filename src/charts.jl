@@ -1,16 +1,16 @@
-type Attribute
+mutable struct Attribute
 	name::Symbol
 	value::String
 	Attribute(name::Symbol) = new(name, "")
 end
 const NULL_ATTRIBUTE = Attribute(:NULL)
 
-type ChartType
+mutable struct ChartType
 	concreteName::String
 	attributes::Vector{Attribute}
 	ancestors::Vector{ChartType}
-	ChartType{A<:Attribute}(attributes::Vector{A}, ancestors::Vector{ChartType}=ChartType[]) = new("NONE", convert(Vector{Attribute}, attributes), ancestors)
-	ChartType{A<:Attribute}(concreteName::String, attributes::Vector{A}, ancestors::Vector{ChartType}=ChartType[]) = new(concreteName, convert(Vector{Attribute}, attributes), ancestors)
+	ChartType(attributes::Vector{A}, ancestors::Vector{ChartType}=ChartType[]) where {A<:Attribute} = new("NONE", convert(Vector{Attribute}, attributes), ancestors)
+	ChartType(concreteName::String, attributes::Vector{A}, ancestors::Vector{ChartType}=ChartType[]) where {A<:Attribute} = new(concreteName, convert(Vector{Attribute}, attributes), ancestors)
 end
 function Base.deepcopy(chart_type::ChartType)
 	name = chart_type.concreteName
@@ -112,7 +112,7 @@ const DataTableWidget = ChartType("dataTable",
 										[WidgetChart])
 
 # DC Chart
-type DCChart
+mutable struct DCChart
 	group::Group
 	typ::ChartType
 	title::String
@@ -150,7 +150,7 @@ function Base.write(io::IO, chart::DCChart, indent::Int)
 end
 
 # DC Widget
-type DCWidget
+mutable struct DCWidget
 	typ::ChartType
 	parent::String
 	html::String
@@ -216,19 +216,19 @@ end
 Whether chart inference is supported for the given array type.
 """
 can_infer_chart(arr::AbstractDataArray) = !any(isna, arr)
-can_infer_chart{I<:Integer}(arr::AbstractDataArray{I}) = !any(isna, arr)
-can_infer_chart{F<:AbstractFloat}(arr::AbstractDataArray{F}) = !any(isna, arr) && !any(isinf, arr) && !any(isnan, arr)
-can_infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}) = !any(isna, arr)
+can_infer_chart(arr::AbstractDataArray{I}) where {I<:Integer} = !any(isna, arr)
+can_infer_chart(arr::AbstractDataArray{F}) where {F<:AbstractFloat} = !any(isna, arr) && !any(isinf, arr) && !any(isnan, arr)
+can_infer_chart(arr::AbstractDataArray{S}) where {S<:AbstractString} = !any(isna, arr)
 
 """
 	infer_chart(arr::AbstractDataArray, group::Group)
 
 Constructs a Chart suitable for the type in arr.
 """
-infer_chart{R<:Real}(arr::AbstractDataArray{R}, group::Group) = barchart(arr, group)
-infer_chart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group) = piechart(arr, group)
+infer_chart(arr::AbstractDataArray{R}, group::Group) where {R<:Real} = barchart(arr, group)
+infer_chart(arr::AbstractDataArray{S}, group::Group) where {S<:AbstractString} = piechart(arr, group)
 
-function scale_default{R<:Real}(arr::AbstractDataArray{R})
+function scale_default(arr::AbstractDataArray{R}) where R<:Real
 	@sprintf("d3.scale.linear().domain([%d,%d])",
 					     floor(Int, minimum(arr)),
 					     ceil(Int, maximum(arr)))
@@ -243,14 +243,14 @@ end
 
 Infer construction of a DC barchart based on the given group.
 """
-function barchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
+function barchart(arr::AbstractDataArray{I}, group::Group) where I<:Integer
 	chart = deepcopy(BarChart)
 	size_default!(chart)
 	chart[:x] = scale_default(arr)
 	chart[:xUnits] = "dc.units.fp.precision(.0)"
 	DCChart(chart, group)
 end
-function barchart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
+function barchart(arr::AbstractDataArray{F}, group::Group) where F<:AbstractFloat
 	chart = deepcopy(BarChart)
 	size_default!(chart)
 	chart[:centerBar] = "true"
@@ -264,14 +264,14 @@ end
 
 Infer construction of a DC piechart based on the given group.
 """
-function piechart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
+function piechart(arr::AbstractDataArray{S}, group::Group) where S<:AbstractString
 	chart = deepcopy(PieChart)
 	size_default!(chart)
 	chart[:radius] = string(parse(Float64, chart[:height].value)*0.4)
 	chart[:slicesCap] = "10"
 	DCChart(chart, group)
 end
-function piechart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
+function piechart(arr::AbstractDataArray{I}, group::Group) where I<:Integer
 	chart = deepcopy(PieChart)
 	size_default!(chart)
 	DCChart(chart, group)
@@ -282,14 +282,14 @@ end
 
 Infer construction of a DC linechart based on the given group.
 """
-function linechart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
+function linechart(arr::AbstractDataArray{I}, group::Group) where I<:Integer
 	chart = deepcopy(LineChart)
 	size_default!(chart)
 	chart[:x] = scale_default(arr)
 	chart[:xUnits] = "dc.units.fp.precision(.0)"
 	DCChart(chart, group)
 end
-function linechart{F<:AbstractFloat}(arr::AbstractDataArray{F}, group::Group)
+function linechart(arr::AbstractDataArray{F}, group::Group) where F<:AbstractFloat
 	chart = deepcopy(LineChart)
 	size_default!(chart)
 	chart[:x] = scale_default(arr)
@@ -342,12 +342,12 @@ end
 
 Infer construction of a DC rowchart based on the given group.
 """
-function rowchart{S<:AbstractString}(arr::AbstractDataArray{S}, group::Group)
+function rowchart(arr::AbstractDataArray{S}, group::Group) where S<:AbstractString
 	chart = deepcopy(RowChart)
 	size_default!(chart)
 	DCChart(chart, group)
 end
-function rowchart{I<:Integer}(arr::AbstractDataArray{I}, group::Group)
+function rowchart(arr::AbstractDataArray{I}, group::Group) where I<:Integer
 	chart = deepcopy(RowChart)
 	size_default!(chart)
 	DCChart(chart, group)

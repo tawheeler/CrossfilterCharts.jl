@@ -27,11 +27,11 @@ end
 
 Constructs a Dimension suitable for the type in arr.
 """
-function infer_dimension{I<:Integer}(arr::AbstractDataArray{I}, name::Symbol)
+function infer_dimension(arr::AbstractDataArray{I}, name::Symbol) where I<:Integer
 	accessor = @sprintf("function(d){return d.%s; }", name)
 	Dimension(name, accessor)
 end
-function infer_dimension{F<:AbstractFloat}(arr::AbstractDataArray{F}, name::Symbol, desired_bincount::Int=10)
+function infer_dimension(arr::AbstractDataArray{F}, name::Symbol, desired_bincount::Int=10) where F<:AbstractFloat
 
     lo,hi = extrema(arr)
     bin_width = round_to_nearest_half_order_of_magnitude((hi-lo)/desired_bincount)
@@ -39,7 +39,7 @@ function infer_dimension{F<:AbstractFloat}(arr::AbstractDataArray{F}, name::Symb
 	accessor = @sprintf("function(d){return Math.round(d.%s / %f)*%f; }", name, bin_width, bin_width)
 	Dimension(name, accessor, bin_width)
 end
-function infer_dimension{S<:AbstractString}(arr::AbstractDataArray{S}, name::Symbol)
+function infer_dimension(arr::AbstractDataArray{S}, name::Symbol) where S<:AbstractString
 	accessor = @sprintf("function(d){return d.%s; }", name)
 	Dimension(name, accessor)
 end
