@@ -53,7 +53,7 @@ function () {
   write(reduction_str, "  };
 })")
   # Assign a random number to master reduction so it doesn't get overwritten
-  Group(dim, string(dim.name, "_master", rand(0:999)), takebuf_string(reduction_str))
+  Group(dim, string(dim.name, "_master", rand(0:999)), String(take!(reduction_str)))
 end
 
 """
@@ -61,6 +61,6 @@ end
 
 Infer construction of a group based on the array datatype.
 """
-infer_group(arr::AbstractDataArray{I}, dim::Dimension) where {I<:Integer} = reduce_sum(dim)
-infer_group(arr::AbstractDataArray{F}, dim::Dimension) where {F<:AbstractFloat} = reduce_sum(dim)
-infer_group(arr::AbstractDataArray{S}, dim::Dimension) where {S<:AbstractString} = reduce_count(dim)
+infer_group(arr::AbstractVector{I}, dim::Dimension) where {I<:Integer} = reduce_sum(dim)
+infer_group(arr::AbstractVector{F}, dim::Dimension) where {F<:AbstractFloat} = reduce_sum(dim)
+infer_group(arr::AbstractVector{S}, dim::Dimension) where {S<:AbstractString} = reduce_count(dim)

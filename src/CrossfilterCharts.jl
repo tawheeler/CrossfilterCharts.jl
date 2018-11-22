@@ -3,6 +3,7 @@ __precompile__(true)
 module CrossfilterCharts
 
 using DataFrames
+using Printf
 
 export
 	dc,

@@ -14,11 +14,11 @@ mutable struct ChartType
 end
 function Base.deepcopy(chart_type::ChartType)
 	name = chart_type.concreteName
-	attributes = Array{Attribute}(length(chart_type.attributes))
+	attributes = Vector{Attribute}(undef, length(chart_type.attributes))
 	for (i,a) in enumerate(chart_type.attributes)
 		attributes[i] = deepcopy(a)
 	end
-	ancestors = Array{ChartType}(length(chart_type.ancestors))
+	ancestors = Vector{ChartType}(undef, length(chart_type.ancestors))
 	for (i,ancestor) in enumerate(chart_type.ancestors)
 		ancestors[i] = deepcopy(ancestor)
 	end
@@ -136,7 +136,7 @@ end
 
 function Base.write(io::IO, chart::DCChart, indent::Int)
 	tabbing = "  "^indent
-	println(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"\#", chart.parent, "\")") # TODO: add chart grouping
+	println(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"#", chart.parent, "\")") # TODO: add chart grouping
 	println(io, tabbing, "  .dimension(", chart.group.dim.name, ")")
 	print(io, tabbing, "  .group(", chart.group.name, ")")
 
@@ -192,14 +192,14 @@ function randomize_parent(widget::DCWidget)
     write(html_str, "</tr>
         </thead>
         </table>")
-		widget.html = takebuf_string(html_str)
+		widget.html = String(take!(html_str))
 	end
 	Union{}
 end
 
 function Base.write(io::IO, chart::DCWidget, indent::Int)
 	tabbing = "  "^indent
-	print(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"\#", chart.parent, "\")") # TODO: add chart grouping
+	print(io, tabbing, "var ", chart.parent, " = dc.", chart.typ.concreteName, "(\"#", chart.parent, "\")") # TODO: add chart grouping
 
 	attributes = get_all_attributes(chart.typ)
 	for (i,a) in enumerate(attributes)
@@ -211,24 +211,25 @@ function Base.write(io::IO, chart::DCWidget, indent::Int)
 end
 
 """
-	can_infer_chart(arr::AbstractDataArray)
+	can_infer_chart(arr::AbstractVector)
 
 Whether chart inference is supported for the given array type.
 """
-can_infer_chart(arr::AbstractDataArray) = !any(isna, arr)
-can_infer_chart(arr::AbstractDataArray{I}) where {I<:Integer} = !any(isna, arr)
-can_infer_chart(arr::AbstractDataArray{F}) where {F<:AbstractFloat} = !any(isna, arr) && !any(isinf, arr) && !any(isnan, arr)
-can_infer_chart(arr::AbstractDataArray{S}) where {S<:AbstractString} = !any(isna, arr)
+isna(x) = isa(x, Missing)
+can_infer_chart(arr::AbstractVector) = !any(isna, arr)
+can_infer_chart(arr::AbstractVector{I}) where {I<:Integer} = !any(isna, arr)
+can_infer_chart(arr::AbstractVector{F}) where {F<:AbstractFloat} = !any(isna, arr) && !any(isinf, arr) && !any(isnan, arr)
+can_infer_chart(arr::AbstractVector{S}) where {S<:AbstractString} = !any(isna, arr)
 
 """
-	infer_chart(arr::AbstractDataArray, group::Group)
+	infer_chart(arr::AbstractVector, group::Group)
 
 Constructs a Chart suitable for the type in arr.
 """
-infer_chart(arr::AbstractDataArray{R}, group::Group) where {R<:Real} = barchart(arr, group)
-infer_chart(arr::AbstractDataArray{S}, group::Group) where {S<:AbstractString} = piechart(arr, group)
+infer_chart(arr::AbstractVector{R}, group::Group) where {R<:Real} = barchart(arr, group)
+infer_chart(arr::AbstractVector{S}, group::Group) where {S<:AbstractString} = piechart(arr, group)
 
-function scale_default(arr::AbstractDataArray{R}) where R<:Real
+function scale_default(arr::AbstractVector{R}) where R<:Real
 	@sprintf("d3.scale.linear().domain([%d,%d])",
 					     floor(Int, minimum(arr)),
 					     ceil(Int, maximum(arr)))
@@ -243,14 +244,14 @@ end
 
 Infer construction of a DC barchart based on the given group.
 """
-function barchart(arr::AbstractDataArray{I}, group::Group) where I<:Integer
+function barchart(arr::AbstractVector{I}, group::Group) where I<:Integer
 	chart = deepcopy(BarChart)
 	size_default!(chart)
 	chart[:x] = scale_default(arr)
 	chart[:xUnits] = "dc.units.fp.precision(.0)"
 	DCChart(chart, group)
 end
-function barchart(arr::AbstractDataArray{F}, group::Group) where F<:AbstractFloat
+function barchart(arr::AbstractVector{F}, group::Group) where F<:AbstractFloat
 	chart = deepcopy(BarChart)
 	size_default!(chart)
 	chart[:centerBar] = "true"
@@ -264,14 +265,14 @@ end
 
 Infer construction of a DC piechart based on the given group.
 """
-function piechart(arr::AbstractDataArray{S}, group::Group) where S<:AbstractString
+function piechart(arr::AbstractVector{S}, group::Group) where S<:AbstractString
 	chart = deepcopy(PieChart)
 	size_default!(chart)
 	chart[:radius] = string(parse(Float64, chart[:height].value)*0.4)
 	chart[:slicesCap] = "10"
 	DCChart(chart, group)
 end
-function piechart(arr::AbstractDataArray{I}, group::Group) where I<:Integer
+function piechart(arr::AbstractVector{I}, group::Group) where I<:Integer
 	chart = deepcopy(PieChart)
 	size_default!(chart)
 	DCChart(chart, group)
@@ -282,14 +283,14 @@ end
 
 Infer construction of a DC linechart based on the given group.
 """
-function linechart(arr::AbstractDataArray{I}, group::Group) where I<:Integer
+function linechart(arr::AbstractVector{I}, group::Group) where I<:Integer
 	chart = deepcopy(LineChart)
 	size_default!(chart)
 	chart[:x] = scale_default(arr)
 	chart[:xUnits] = "dc.units.fp.precision(.0)"
 	DCChart(chart, group)
 end
-function linechart(arr::AbstractDataArray{F}, group::Group) where F<:AbstractFloat
+function linechart(arr::AbstractVector{F}, group::Group) where F<:AbstractFloat
 	chart = deepcopy(LineChart)
 	size_default!(chart)
 	chart[:x] = scale_default(arr)
@@ -342,12 +343,12 @@ end
 
 Infer construction of a DC rowchart based on the given group.
 """
-function rowchart(arr::AbstractDataArray{S}, group::Group) where S<:AbstractString
+function rowchart(arr::AbstractVector{S}, group::Group) where S<:AbstractString
 	chart = deepcopy(RowChart)
 	size_default!(chart)
 	DCChart(chart, group)
 end
-function rowchart(arr::AbstractDataArray{I}, group::Group) where I<:Integer
+function rowchart(arr::AbstractVector{I}, group::Group) where I<:Integer
 	chart = deepcopy(RowChart)
 	size_default!(chart)
 	DCChart(chart, group)
@@ -386,7 +387,7 @@ function datatablewidget(col::Symbol, columns::Vector{Symbol}, group_results::Bo
 		print(col_str, "function(d) {return d.", key, ";},\n")
   end
   print(col_str, "]")
-  chart[:columns] = takebuf_string(col_str)
+  chart[:columns] = String(take!(col_str))
   chart[:size] = "15"
   dcwidget = DCWidget(chart, columns, group_results)
   randomize_parent(dcwidget)

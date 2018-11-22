@@ -28,7 +28,7 @@ end
 Returns the group inside the given DCCout instance with the given name.
 """
 function get_group_by_name(dcout::DCOut, name::String)
-	results = find(x -> x.name == name, dcout.groups)
+	results = findall(x -> x.name == name, dcout.groups)
 	if length(results) == 0
 		error("group \"", name, "\" not found")
 	elseif length(results) == 1
@@ -45,7 +45,7 @@ Returns the groups inside the given DCCout instance associated with
 the given column.
 """
 function get_groups_by_col(dcout::DCOut, col::Symbol)
-	idxs = find(x -> x.dim.name == col, dcout.groups)
+	idxs = findall(x -> x.dim.name == col, dcout.groups)
 	result = Group[]
 	for idx in idxs
 		push!(result, dcout.groups[idx])
@@ -59,7 +59,7 @@ end
 Returns the dimension inside the given DCCout instance created from the given column.
 """
 function get_dim_by_col(dcout::DCOut, col::Symbol)
-	results = find(x -> x.name == col, dcout.dims)
+	results = findall(x -> x.name == col, dcout.dims)
 	if length(results) == 0
 		error("dimension from column \"", col, "\" not found")
 	elseif length(results) == 1
@@ -76,7 +76,7 @@ Returns all charts constructed from the given column of the given type.
 `chart_type` can be: piechart, barchart, linechart, rowchart, bubblechart
 """
 function get_charts(dcout::DCOut, col::Symbol, chart_type::String)
-	idxs = find(x -> (x.group.dim.name == col && uppercase(chart_type) == uppercase(x.typ.concreteName)), dcout.charts)
+	idxs = findall(x -> (x.group.dim.name == col && uppercase(chart_type) == uppercase(x.typ.concreteName)), dcout.charts)
 	result = DCChart[]
 	for idx in idxs
 		push!(result, dcout.charts[idx])
@@ -90,7 +90,7 @@ end
 Append the Dimension to the list of dimensions in the DCOut object.
 """
 function add_dimension!(dcout::DCOut, dim::Dimension)
-	if findfirst(x -> x.name == dim.name, dcout.dims) > 0
+	if findfirst(x -> x.name == dim.name, dcout.dims) != nothing
 		error(string("attempt to add dimension \"", dim.name, "\" failed: a dimension with that name already exists"))
 	end
 	push!(dcout.dims, dim)
@@ -123,7 +123,7 @@ end
 Append the Group to the list of groups in the DCOut object.
 """
 function add_group!(dcout::DCOut, group::Group)
-	if length(find(x -> x.name == group.name, dcout.groups)) > 0
+	if any(x -> x.name == group.name, dcout.groups)
 		error(string("attempt to add group \"", group.name, "\" failed: a group with that name already exists"))
 	end
 	push!(dcout.groups, group)
@@ -136,7 +136,7 @@ end
 Removes the given Group from the list of groups in the DCOut object.
 """
 function remove_group!(dcout::DCOut, group::Group)
-	targets = find(x -> x.name == group.name, dcout.groups)
+	targets = findall(x -> x.name == group.name, dcout.groups)
 	if length(targets) == 0
 		error("group \"", group.name, "\" does not exist")
 	elseif length(targets) > 1
@@ -156,7 +156,7 @@ end
 Removes the given DCChart from the list of charts in the DCOut object.
 """
 function remove_chart!(dcout::DCOut, chart::DCChart)
-	targets = find(x -> x.parent == chart.parent, dcout.charts)
+	targets = findall(x -> x.parent == chart.parent, dcout.charts)
 	if length(targets) == 0
 		error("chart \"", chart.parent, "\" does not exist")
 	elseif length(targets) > 1

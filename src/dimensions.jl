@@ -17,7 +17,7 @@ function round_to_nearest_half_order_of_magnitude(w::Real)
     x_mid = 10.0^a
     x_lo = x_mid*0.5
     x_hi = 0.5*10.0^(a+1)
-    i = indmin([abs(x_mid-w), abs(x_lo-w), abs(x_hi-w)])
+    i = findmin([abs(x_mid-w), abs(x_lo-w), abs(x_hi-w)])
     i == 1 ? x_mid : i ==2 ? x_lo : x_hi
 end
 
@@ -27,11 +27,11 @@ end
 
 Constructs a Dimension suitable for the type in arr.
 """
-function infer_dimension(arr::AbstractDataArray{I}, name::Symbol) where I<:Integer
+function infer_dimension(arr::AbstractVector{I}, name::Symbol) where I<:Integer
 	accessor = @sprintf("function(d){return d.%s; }", name)
 	Dimension(name, accessor)
 end
-function infer_dimension(arr::AbstractDataArray{F}, name::Symbol, desired_bincount::Int=10) where F<:AbstractFloat
+function infer_dimension(arr::AbstractVector{F}, name::Symbol, desired_bincount::Int=10) where F<:AbstractFloat
 
     lo,hi = extrema(arr)
     bin_width = round_to_nearest_half_order_of_magnitude((hi-lo)/desired_bincount)
@@ -39,7 +39,7 @@ function infer_dimension(arr::AbstractDataArray{F}, name::Symbol, desired_bincou
 	accessor = @sprintf("function(d){return Math.round(d.%s / %f)*%f; }", name, bin_width, bin_width)
 	Dimension(name, accessor, bin_width)
 end
-function infer_dimension(arr::AbstractDataArray{S}, name::Symbol) where S<:AbstractString
+function infer_dimension(arr::AbstractVector{S}, name::Symbol) where S<:AbstractString
 	accessor = @sprintf("function(d){return d.%s; }", name)
 	Dimension(name, accessor)
 end
