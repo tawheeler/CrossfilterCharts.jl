@@ -86,7 +86,7 @@ end
 
 function write_data(io::IO, dcout::DCOut)
     df = dcout.df
-	values = Array{Any}(undef, length(dcout.dims))
+	values = Vector{Any}(undef, length(dcout.dims))
     colnames = map(dim->dim.name, dcout.dims)
 	print(io, "data = [")
 	for i in 1:nrow(df)
